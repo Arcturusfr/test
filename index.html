@@ -198,9 +198,6 @@
     .icon-btn{font-size:18px;width:34px;height:34px;border-radius:7px;border:1.5px solid var(--border2);background:var(--bg3);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;}
     .icon-btn.sel{border-color:var(--accent);background:var(--accent-dim);}
     .icon-btn:hover{border-color:var(--accent);}
-    .hall-row{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s;border-left:3px solid transparent;}
-    .hall-row:hover{background:var(--bg3);}
-    .hall-row.selected{background:var(--accent-dim);border-left-color:var(--accent);}
     .hall-color-btn{width:20px;height:20px;border-radius:5px;flex-shrink:0;border:2px solid transparent;cursor:pointer;transition:all .15s;}
     .hall-color-btn.sel{border-color:var(--text);transform:scale(1.18);}
     .hall-detail-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow);}
@@ -454,7 +451,7 @@ function App(){
   return(<div className="app">
     <Header view={view} setView={v=>{setView(v);setSelId(null);}} isAdmin={isAdmin} setIsAdmin={setIsAdmin} setShowLogin={setShowLogin}/>
     <div className="main">
-      {view==="stands"&&!selId&&(<div className="panel">
+      {view==="stands"&&!selId&&!selHallId&&(<div className="panel">
         <div className="search-wrap"><span className="search-icon"><Icon name="search" size={15}/></span>
           <input className="search-input" placeholder="Rechercher un stand, service, circulation…" value={search} onChange={e=>setSearch(e.target.value)}/>
         </div>
@@ -467,7 +464,8 @@ function App(){
         {filtered.length===0?<div className="empty-state"><div className="empty-state-icon">🔍</div><div className="empty-state-text">Aucun élément trouvé</div></div>
           :<div className="stands-grid">{filtered.map(c=><ItemCard key={`${c.family}-${c.id}`} item={c} onClick={()=>goItem(c.family,c.id)}/>)}</div>}
       </div>)}
-      {view==="stands"&&selId&&<ItemDetail item={getItem(selId)} onBack={()=>setSelId(null)}/>}
+      {view==="stands"&&selId&&!selHallId&&<ItemDetail item={getItem(selId)} onBack={()=>setSelId(null)}/>}
+      {view==="stands"&&selHallId&&!selId&&<HallDetail hall={halls.find(h=>h.id===selHallId)} stands={stands} access={access} services={services} onBack={()=>setSelHallId(null)} onItemClick={goItem}/>}
       {view==="map"&&<MapView stands={stands} access={access} services={services} halls={halls} onItemClick={goItem} onHallClick={goHall}/>}
       {view==="agenda"&&<div className="panel"><AgendaView stands={stands} onStandClick={id=>goItem("stand",id)}/></div>}
       {view==="admin"&&(isAdmin
@@ -636,6 +634,11 @@ function MapView({stands,access,services,halls,onItemClick,onHallClick}){
       </div>
       <div style={{width:1,background:"var(--border)",alignSelf:"stretch",margin:"0 6px"}}/>
       <div className="map-legend-group">
+        <div className="map-legend-title" style={{color:"#5a4a3a"}}>Halls</div>
+        <div className="map-legend-items">{halls.map(h=><div key={h.id} className="legend-item" onClick={()=>onHallClick&&onHallClick(h.id)}><div className="legend-dot" style={{background:h.border,borderRadius:3}}/>{h.name}</div>)}</div>
+      </div>
+      <div style={{width:1,background:"var(--border)",alignSelf:"stretch",margin:"0 6px"}}/>
+      <div className="map-legend-group">
         <div className="map-legend-title" style={{color:"var(--col-access)"}}>Circulations</div>
         <div className="map-legend-items">{access.map(a=><div key={a.id} className="legend-item" onClick={()=>onItemClick("access",a.id)}><div className="legend-diamond" style={{background:a.color}}/>{a.icon} {a.name}</div>)}</div>
       </div>
@@ -661,21 +664,21 @@ function HallDetail({hall,stands,access,services,onBack,onItemClick}){
   });
   return(<div className="detail-panel">
     <div className="detail-hero">
-      <button className="detail-back" onClick={onBack}><span style={{marginRight:4}}>function AgendaView({stands,onStandClick}){#8592;</span> Retour au plan</button>
+      <button className="detail-back" onClick={onBack}><span style={{marginRight:4}}>←</span> Retour au plan</button>
       <div className="detail-header">
         <div className="detail-emoji" style={{background:hx(bc,.12),borderColor:hx(bc,.3),fontSize:"28px"}}>🏛️</div>
         <div className="detail-title">
           <div className="detail-name">{hall.name}</div>
           <div className="detail-chips">
             <span className="detail-chip" style={{background:hx(bc,.12),color:bc,borderColor:hx(bc,.3)}}>{hallStands.length} stand{hallStands.length!==1?"s":""}</span>
-            {hallAccess.length>0function AgendaView({stands,onStandClick}){function AgendaView({stands,onStandClick}){<span className="detail-chip">{hallAccess.length} circulation{hallAccess.length!==1?"s":""}</span>}
-            {hallServices.length>0function AgendaView({stands,onStandClick}){function AgendaView({stands,onStandClick}){<span className="detail-chip">{hallServices.length} service{hallServices.length!==1?"s":""}</span>}
+            {hallAccess.length>0&&<span className="detail-chip">{hallAccess.length} circulation{hallAccess.length!==1?"s":""}</span>}
+            {hallServices.length>0&&<span className="detail-chip">{hallServices.length} service{hallServices.length!==1?"s":""}</span>}
           </div>
         </div>
       </div>
     </div>
     <div className="detail-body">
-      {hallStands.length>0function AgendaView({stands,onStandClick}){function AgendaView({stands,onStandClick}){<div className="detail-section">
+      {hallStands.length>0&&<div className="detail-section">
         <div className="detail-section-title" style={{color:bc}}>Stands</div>
         <div className="hall-stands-grid">
           {hallStands.map(s=>(<div key={s.id} className="hall-stand-chip" onClick={()=>onItemClick("stand",s.id)}>
@@ -684,7 +687,7 @@ function HallDetail({hall,stands,access,services,onBack,onItemClick}){
           </div>))}
         </div>
       </div>}
-      {hallAccess.length>0function AgendaView({stands,onStandClick}){function AgendaView({stands,onStandClick}){<div className="detail-section">
+      {hallAccess.length>0&&<div className="detail-section">
         <div className="detail-section-title" style={{color:"var(--col-access)"}}>Circulations</div>
         <div className="hall-stands-grid">
           {hallAccess.map(a=>(<div key={a.id} className="hall-stand-chip" style={{borderColor:hx("#1a6fa8",.3)}} onClick={()=>onItemClick("access",a.id)}>
@@ -693,7 +696,7 @@ function HallDetail({hall,stands,access,services,onBack,onItemClick}){
           </div>))}
         </div>
       </div>}
-      {hallServices.length>0function AgendaView({stands,onStandClick}){function AgendaView({stands,onStandClick}){<div className="detail-section">
+      {hallServices.length>0&&<div className="detail-section">
         <div className="detail-section-title" style={{color:"var(--col-service)"}}>Services</div>
         <div className="hall-stands-grid">
           {hallServices.map(s=>(<div key={s.id} className="hall-stand-chip" style={{borderColor:hx("#2d7a4f",.3)}} onClick={()=>onItemClick("service",s.id)}>
@@ -702,7 +705,9 @@ function HallDetail({hall,stands,access,services,onBack,onItemClick}){
           </div>))}
         </div>
       </div>}
-      {hallStands.length===0function AgendaView({stands,onStandClick}){function AgendaView({stands,onStandClick}){hallAccess.length===0function AgendaView({stands,onStandClick}){function AgendaView({stands,onStandClick}){hallServices.length===0function AgendaView({stands,onStandClick}){function AgendaView({stands,onStandClick}){<div className="empty-state"><div className="empty-state-icon">🏛️</div><div className="empty-state-text">Ce hall ne contient aucun élément pour le moment.</div></div>}
+      {hallStands.length===0&&hallAccess.length===0&&hallServices.length===0&&(
+        <div className="empty-state"><div className="empty-state-icon">🏛️</div><div className="empty-state-text">Ce hall ne contient aucun élément pour le moment.</div></div>
+      )}
     </div>
   </div>);}
 
@@ -1018,7 +1023,7 @@ function PlanEditor({stands,setStands,access,setAccess,services,setServices,hall
               onMouseDown={e=>{if(tool==="select"){e.stopPropagation();onHallMD(h.id,e);}}}
               onDoubleClick={e=>{e.stopPropagation();setEditHallModal(h);}}
               onContextMenu={e=>{e.preventDefault();e.stopPropagation();setSelHallKey(h.id);setSelKey(null);}}>
-              <rect x={h.x} y={h.y} width={h.w} height={h.h} fill={h.color} stroke={isSH?"#5a4a3a":h.border} strokeWidth={isSH?2.5:1.5} rx="8" strokeDasharray={isSH?"none":"6,3"}/>
+              <rect x={h.x} y={h.y} width={h.w} height={h.h} fill={h.color} stroke={isSH?"#5a4a3a":h.border} strokeWidth={isSH?2.5:1.5} rx="8" strokeDasharray={isSH?undefined:"6 3"}/>
               {isSH&&<rect x={h.x-3} y={h.y-3} width={h.w+6} height={h.h+6} rx="11" fill="none" stroke="#5a4a3a" strokeWidth="1" strokeDasharray="5,3" opacity=".5"/>}
               <text x={h.x+12} y={h.y+20} fill={h.border} fontSize="13" fontWeight="700" fontFamily="Cormorant Garamond">{h.name}</text>
               <text x={h.x+h.w-10} y={h.y+20} fill={h.border} fontSize="9" textAnchor="end" fontFamily="DM Sans" opacity=".7">{stands.filter(s=>s.hall===h.id).length} st.</text>

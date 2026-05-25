@@ -1237,7 +1237,7 @@ function ConfirmModal({msg,onConfirm,onClose}){return(<div className="modal-over
   <div className="modal-footer"><button className="btn-secondary" onClick={onClose}>Annuler</button><button className="btn-danger" style={{padding:"9px 18px"}} onClick={onConfirm}><Icon name="trash" size={14}/> Supprimer</button></div>
 </div></div>);}
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+const root = ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
 </body>
 </html>

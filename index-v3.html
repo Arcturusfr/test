@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <title>EXPOConnect — Salon Professionnel</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --bg:#f5f2ee;--bg2:#ffffff;--bg3:#ece8e2;--card:#ffffff;
+      --accent:#7a2035;--accent2:#9e2d47;--accent-dim:#7a203518;
+      --text:#1e1a17;--text2:#6b5f57;--text3:#a0948c;
+      --border:#e0d9d1;--border2:#cec5bb;
+      --red:#c0392b;
+      --col-stand:#7a2035;
+      --col-access:#1a6fa8;
+      --col-service:#2d7a4f;
+      --r:10px;--r2:16px;
+      --shadow:0 2px 12px rgba(120,80,60,.08);
+      --shadow-md:0 6px 28px rgba(120,80,60,.13);
+      --shadow-lg:0 16px 56px rgba(120,80,60,.18);
+    }
+    html,body,#root{height:100%;background:var(--bg);}
+    body{font-family:'DM Sans',sans-serif;color:var(--text);font-size:14px;overflow:hidden;}
+    .app{display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+    .header{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:62px;background:var(--bg2);border-bottom:1px solid var(--border);box-shadow:var(--shadow);flex-shrink:0;z-index:100;}
+    .header-logo{font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:600;letter-spacing:2px;color:var(--accent);}
+    .header-logo span{color:var(--text3);font-weight:300;font-style:italic;}
+    .header-nav{display:flex;gap:4px;}
+    .nav-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;border:none;background:transparent;color:var(--text2);cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;transition:all .2s;}
+    .nav-btn:hover{background:var(--bg3);color:var(--text);}
+    .nav-btn.active{background:var(--accent-dim);color:var(--accent);}
+    .header-right{display:flex;align-items:center;gap:10px;}
+    .admin-badge{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:8px;background:var(--accent-dim);color:var(--accent);font-size:12px;font-weight:500;border:1px solid #7a203530;}
+    .btn-icon{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:all .2s;}
+    .btn-icon:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim);}
+    .main{flex:1;overflow:hidden;display:flex;flex-direction:column;}
+    .panel{flex:1;overflow-y:auto;overflow-x:hidden;padding:24px;background:var(--bg);}
+    .panel::-webkit-scrollbar{width:4px;}
+    .panel::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+    .search-wrap{position:relative;margin-bottom:20px;}
+    .search-input{width:100%;padding:11px 16px 11px 42px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;transition:border .2s;box-shadow:var(--shadow);}
+    .search-input:focus{outline:none;border-color:var(--accent);}
+    .search-input::placeholder{color:var(--text3);}
+    .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;}
+    .filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+    .filter-chip{padding:5px 13px;border-radius:20px;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+    .filter-chip:hover{border-color:var(--accent);color:var(--accent);}
+    .filter-chip.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);font-weight:500;}
+    .filter-chip.access{border-color:#1a6fa840;}
+    .filter-chip.access.active{background:#1a6fa815;border-color:var(--col-access);color:var(--col-access);}
+    .filter-chip.service{border-color:#2d7a4f40;}
+    .filter-chip.service.active{background:#2d7a4f15;border-color:var(--col-service);color:var(--col-service);}
+    .stands-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+    .stand-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);cursor:pointer;transition:all .25s;overflow:hidden;box-shadow:var(--shadow);}
+    .stand-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+    .stand-card-accent{height:3px;}
+    .stand-card-body{padding:18px;}
+    .stand-card-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;}
+    .stand-emoji{font-size:26px;width:46px;height:46px;display:flex;align-items:center;justify-content:center;border-radius:10px;flex-shrink:0;border:1px solid var(--border);}
+    .stand-card-meta{flex:1;min-width:0;}
+    .stand-family-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;text-transform:uppercase;letter-spacing:.8px;padding:2px 7px;border-radius:4px;font-weight:500;margin-bottom:3px;}
+    .stand-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--text);line-height:1.2;margin-bottom:2px;}
+    .stand-sub{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;}
+    .stand-number{font-size:11px;color:var(--accent);font-weight:500;letter-spacing:1px;}
+    .stand-desc{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+    .stand-note{font-size:12px;color:var(--text2);font-style:italic;margin-bottom:10px;}
+    .stand-events-preview{display:flex;flex-wrap:wrap;gap:5px;}
+    .event-tag{display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:500;}
+    .event-tag-dot{width:5px;height:5px;border-radius:50%;}
+    .detail-panel{flex:1;overflow-y:auto;display:flex;flex-direction:column;background:var(--bg);}
+    .detail-panel::-webkit-scrollbar{width:4px;}
+    .detail-panel::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+    .detail-hero{padding:28px 28px 24px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0;box-shadow:var(--shadow);}
+    .detail-back{display:flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--text3);font-size:13px;cursor:pointer;margin-bottom:20px;font-family:'DM Sans',sans-serif;transition:color .2s;}
+    .detail-back:hover{color:var(--accent);}
+    .detail-header{display:flex;align-items:flex-start;gap:16px;}
+    .detail-emoji{font-size:38px;width:64px;height:64px;display:flex;align-items:center;justify-content:center;border-radius:14px;flex-shrink:0;border:1px solid var(--border);}
+    .detail-title{flex:1;}
+    .detail-name{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--text);margin-bottom:8px;}
+    .detail-chips{display:flex;flex-wrap:wrap;gap:6px;}
+    .detail-chip{padding:4px 10px;border-radius:5px;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.8px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);}
+    .detail-body{padding:26px 28px;flex:1;}
+    .detail-section{margin-bottom:26px;}
+    .detail-section-title{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;letter-spacing:1px;color:var(--accent);text-transform:uppercase;margin-bottom:12px;padding-bottom:7px;border-bottom:1px solid #7a203520;}
+    .detail-desc{color:var(--text2);line-height:1.75;font-size:14px;}
+    .detail-contact{display:flex;flex-direction:column;gap:8px;}
+    .contact-row{display:flex;align-items:center;gap:10px;color:var(--text2);font-size:13px;}
+    .contact-row a{color:var(--accent);text-decoration:none;}
+    .contact-row a:hover{text-decoration:underline;}
+    .events-list{display:flex;flex-direction:column;gap:10px;}
+    .event-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;border-left:3px solid;transition:all .2s;}
+    .event-card:hover{background:var(--bg2);box-shadow:var(--shadow);}
+    .event-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+    .event-type-badge{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;}
+    .event-date{font-size:11px;color:var(--text3);}
+    .event-title{font-weight:500;color:var(--text);font-size:14px;margin-bottom:4px;}
+    .event-desc{font-size:12px;color:var(--text2);line-height:1.5;}
+    .map-container{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+    .map-toolbar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;box-shadow:var(--shadow);}
+    .map-toolbar-left{display:flex;align-items:center;gap:10px;}
+    .map-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--accent);}
+    .zoom-btns{display:flex;gap:4px;}
+    .zoom-btn{width:32px;height:32px;border-radius:7px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:15px;}
+    .zoom-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim);}
+    .map-hint{font-size:11px;color:var(--text3);}
+    .map-svg-wrap{flex:1;overflow:hidden;position:relative;touch-action:none;cursor:grab;background:var(--bg3);}
+    .map-svg-wrap:active{cursor:grabbing;}
+    .map-legend-wrap{padding:8px 20px;background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0;display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;}
+    .map-legend-group{display:flex;flex-direction:column;gap:3px;}
+    .map-legend-title{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-weight:500;margin-bottom:2px;}
+    .map-legend-items{display:flex;gap:10px;flex-wrap:wrap;}
+    .legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);cursor:pointer;transition:color .15s;}
+    .legend-item:hover{color:var(--accent);}
+    .legend-dot{width:10px;height:10px;border-radius:2px;}
+    .legend-diamond{width:10px;height:10px;transform:rotate(45deg);border-radius:1px;}
+    .legend-circle{width:10px;height:10px;border-radius:50%;}
+    .agenda-day{margin-bottom:28px;}
+    .agenda-day-title{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:var(--accent);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #7a203520;}
+    .agenda-event-row{display:flex;gap:14px;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px;transition:all .2s;cursor:pointer;box-shadow:var(--shadow);}
+    .agenda-event-row:hover{box-shadow:var(--shadow-md);transform:translateX(2px);}
+    .agenda-event-bar{width:3px;border-radius:2px;flex-shrink:0;}
+    .agenda-event-content{flex:1;}
+    .agenda-event-stand{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px;}
+    .agenda-event-title{font-weight:500;color:var(--text);margin-bottom:3px;}
+    .agenda-event-type{font-size:11px;padding:2px 7px;border-radius:4px;display:inline-block;}
+    .admin-layout{flex:1;display:flex;overflow:hidden;}
+    .admin-sidebar{width:224px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);padding:18px 12px;display:flex;flex-direction:column;gap:3px;}
+    .admin-sidebar-title{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);padding:4px 10px 10px;}
+    .sidebar-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:8px;border:none;background:transparent;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;text-align:left;transition:all .2s;width:100%;}
+    .sidebar-item:hover{background:var(--bg3);color:var(--text);}
+    .sidebar-item.active{background:var(--accent-dim);color:var(--accent);}
+    .sidebar-sep{height:1px;background:var(--border);margin:5px 10px;}
+    .admin-content{flex:1;overflow-y:auto;padding:24px;background:var(--bg);}
+    .admin-content::-webkit-scrollbar{width:4px;}
+    .admin-content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+    .admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+    .admin-page-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--text);}
+    .btn-primary{display:flex;align-items:center;gap:7px;padding:9px 18px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;}
+    .btn-primary:hover{background:var(--accent2);}
+    .btn-primary.access{background:var(--col-access);}
+    .btn-primary.access:hover{background:#155d94;}
+    .btn-primary.service{background:var(--col-service);}
+    .btn-primary.service:hover{background:#235f3d;}
+    .btn-secondary{display:flex;align-items:center;gap:7px;padding:8px 16px;border-radius:8px;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .2s;}
+    .btn-secondary:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim);}
+    .btn-danger{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:7px;border:1px solid #c0392b30;background:transparent;color:var(--red);font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:all .2s;}
+    .btn-danger:hover{background:#c0392b10;border-color:var(--red);}
+    .data-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:var(--r2);overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--border);}
+    .data-table th{text-align:left;padding:11px 14px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);border-bottom:1px solid var(--border);font-weight:500;background:var(--bg3);}
+    .data-table td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle;}
+    .data-table tr:last-child td{border-bottom:none;}
+    .data-table tr:hover td{background:#f5f2ee;}
+    .table-actions{display:flex;gap:6px;}
+    .modal-overlay{position:fixed;inset:0;z-index:1000;background:rgba(30,20,15,.45);display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(5px);}
+    .modal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);width:100%;max-width:580px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);}
+    .modal::-webkit-scrollbar{width:4px;}
+    .modal::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);z-index:1;}
+    .modal-title{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:var(--text);}
+    .modal-body{padding:24px;}
+    .modal-footer{display:flex;justify-content:flex-end;gap:10px;padding:16px 24px;border-top:1px solid var(--border);position:sticky;bottom:0;background:var(--bg2);}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    .form-group{display:flex;flex-direction:column;gap:6px;}
+    .form-group.full{grid-column:1/-1;}
+    .form-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-weight:500;}
+    .form-input,.form-select,.form-textarea{padding:9px 12px;background:var(--bg);border:1px solid var(--border2);border-radius:7px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;transition:border .2s;}
+    .form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--accent);}
+    .form-textarea{resize:vertical;min-height:80px;}
+    .form-select option{background:var(--bg2);color:var(--text);}
+    .login-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg);}
+    .login-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:44px;width:100%;max-width:380px;box-shadow:var(--shadow-lg);}
+    .login-logo{text-align:center;margin-bottom:32px;}
+    .login-logo-text{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;color:var(--accent);letter-spacing:2px;}
+    .login-subtitle{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:2.5px;margin-top:5px;}
+    .login-divider{height:1px;background:var(--border);margin:4px 0 8px;}
+    .login-form{display:flex;flex-direction:column;gap:16px;}
+    .login-error{background:#c0392b0f;border:1px solid #c0392b30;border-radius:7px;padding:10px 14px;font-size:13px;color:var(--red);}
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
+    .stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:20px;text-align:center;box-shadow:var(--shadow);transition:box-shadow .2s;}
+    .stat-card:hover{box-shadow:var(--shadow-md);}
+    .stat-value{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:600;color:var(--accent);line-height:1;}
+    .stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-top:6px;}
+    .color-options{display:flex;gap:8px;flex-wrap:wrap;}
+    .color-swatch{width:26px;height:26px;border-radius:6px;border:2px solid transparent;cursor:pointer;transition:all .2s;}
+    .color-swatch.selected{border-color:var(--accent);transform:scale(1.18);}
+    .empty-state{text-align:center;padding:60px 20px;}
+    .empty-state-icon{font-size:40px;margin-bottom:12px;}
+    .empty-state-text{font-size:14px;color:var(--text2);}
+    .divider{height:1px;background:var(--border);margin:0 0 20px;}
+    .icon-picker{display:flex;gap:6px;flex-wrap:wrap;}
+    .icon-btn{font-size:18px;width:34px;height:34px;border-radius:7px;border:1.5px solid var(--border2);background:var(--bg3);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;}
+    .icon-btn.sel{border-color:var(--accent);background:var(--accent-dim);}
+    .icon-btn:hover{border-color:var(--accent);}
+    .hall-row{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s;border-left:3px solid transparent;}
+    .hall-row:hover{background:var(--bg3);}
+    .hall-row.selected{background:var(--accent-dim);border-left-color:var(--accent);}
+    .hall-color-btn{width:20px;height:20px;border-radius:5px;flex-shrink:0;border:2px solid transparent;cursor:pointer;transition:all .15s;}
+    .hall-color-btn.sel{border-color:var(--text);transform:scale(1.18);}
+    .hall-detail-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow);}
+    .hall-detail-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;}
+    .hall-detail-icon{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+    .hall-detail-name{font-family:"Cormorant Garamond",serif;font-size:22px;font-weight:600;color:var(--text);}
+    .hall-detail-count{font-size:12px;color:var(--text3);margin-top:2px;}
+    .hall-detail-body{padding:16px 20px;}
+    .hall-stands-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}
+    .hall-stand-chip{display:flex;align-items:center;gap:9px;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:all .15s;}
+    .hall-stand-chip:hover{border-color:var(--accent);background:var(--accent-dim);}
+    .hall-stand-emoji{font-size:18px;}
+    .hall-stand-name{font-size:13px;font-weight:500;color:var(--text);}
+    .hall-stand-num{font-size:11px;color:var(--text3);}
+    .toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--accent);border-radius:10px;padding:12px 20px;color:#fff;font-size:13px;font-weight:500;box-shadow:0 8px 28px #7a203540;animation:slideUp .3s ease;}
+    @keyframes slideUp{from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+    /* EDITOR */
+    .editor-layout{flex:1;display:flex;overflow:hidden;}
+    .editor-list{width:248px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+    .editor-list-header{padding:11px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:4px;}
+    .editor-list-title{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3);font-weight:500;}
+    .editor-add-btns{display:flex;gap:3px;}
+    .editor-add-btn{padding:4px 8px;border-radius:6px;border:1px solid var(--border2);background:transparent;font-size:12px;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;}
+    .editor-add-btn.stand{color:var(--col-stand);border-color:#7a203540;}
+    .editor-add-btn.stand:hover{background:#7a203512;}
+    .editor-add-btn.access{color:var(--col-access);border-color:#1a6fa840;}
+    .editor-add-btn.access:hover{background:#1a6fa812;}
+    .editor-add-btn.service{color:var(--col-service);border-color:#2d7a4f40;}
+    .editor-add-btn.service:hover{background:#2d7a4f12;}
+    .editor-list-body{flex:1;overflow-y:auto;padding:6px;}
+    .editor-list-body::-webkit-scrollbar{width:3px;}
+    .editor-list-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+    .editor-list-section{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);padding:10px 10px 4px;font-weight:600;}
+    .editor-item-row{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:7px;cursor:pointer;transition:all .15s;border:1px solid transparent;}
+    .editor-item-row:hover{background:var(--bg3);}
+    .editor-item-row.selected{background:var(--accent-dim);border-color:#7a203528;}
+    .editor-item-dot{width:9px;height:9px;flex-shrink:0;}
+    .editor-item-info{flex:1;min-width:0;}
+    .editor-item-name{font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .editor-item-sub{font-size:10px;color:var(--text3);}
+    .editor-canvas-col{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+    .editor-toolbar{display:flex;align-items:center;gap:5px;padding:7px 12px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;}
+    .editor-toolbar-sep{width:1px;height:20px;background:var(--border2);margin:0 2px;}
+    .tool-btn{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .18s;white-space:nowrap;}
+    .tool-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim);}
+    .tool-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+    .tool-btn.access-active{background:var(--col-access);color:#fff;border-color:var(--col-access);}
+    .tool-btn.service-active{background:var(--col-service);color:#fff;border-color:var(--col-service);}
+    .tool-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .editor-canvas-wrap{flex:1;overflow:hidden;position:relative;background:var(--bg3);}
+    .editor-statusbar{padding:4px 14px;background:var(--bg2);border-top:1px solid var(--border);font-size:11px;color:var(--text3);display:flex;gap:18px;flex-shrink:0;align-items:center;}
+    .editor-props{width:278px;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+    .editor-props-header{padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;}
+    .editor-props-title{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;color:var(--accent);}
+    .editor-props-family{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;}
+    .editor-props-body{flex:1;overflow-y:auto;padding:13px;}
+    .editor-props-body::-webkit-scrollbar{width:3px;}
+    .editor-props-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+    .prop-section{margin-bottom:16px;}
+    .prop-section-title{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3);font-weight:500;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border);}
+    .prop-row{display:flex;align-items:center;margin-bottom:6px;gap:7px;}
+    .prop-label{font-size:11px;color:var(--text2);flex-shrink:0;width:62px;}
+    .prop-input{flex:1;padding:5px 8px;background:var(--bg);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;transition:border .2s;}
+    .prop-input:focus{outline:none;border-color:var(--accent);}
+    .prop-row-2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;}
+    .prop-field{display:flex;flex-direction:column;gap:3px;}
+    .prop-field label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;}
+    .prop-field input,.prop-field select{padding:5px 7px;background:var(--bg);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;}
+    .prop-field input:focus,.prop-field select:focus{outline:none;border-color:var(--accent);}
+    .align-btns{display:flex;gap:4px;flex-wrap:wrap;}
+    .align-btn{padding:4px 8px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--text2);font-size:10px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
+    .align-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim);}
+    .snap-toggle{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text2);}
+    .snap-toggle input{accent-color:var(--accent);}
+    .halls-list{display:flex;flex-direction:column;gap:5px;}
+    .hall-row{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg);border:1px solid var(--border);border-radius:7px;cursor:pointer;transition:all .15s;}
+    .hall-row:hover{background:var(--bg3);}
+    .hall-color{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+    .hall-name{flex:1;font-size:12px;font-weight:500;color:var(--text);}
+    .hall-count{font-size:10px;color:var(--text3);}
+    .no-selection{text-align:center;padding:26px 12px;color:var(--text3);}
+    .no-selection-icon{font-size:24px;margin-bottom:8px;}
+    .no-selection-text{font-size:12px;line-height:1.65;}
+    .ctx-menu{position:fixed;z-index:500;background:var(--bg2);border:1px solid var(--border2);border-radius:10px;box-shadow:var(--shadow-md);min-width:158px;padding:5px;}
+    .ctx-item{display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:6px;font-size:13px;color:var(--text2);cursor:pointer;transition:all .15s;}
+    .ctx-item:hover{background:var(--bg3);color:var(--text);}
+    .ctx-item.danger{color:var(--red);}
+    .ctx-item.danger:hover{background:#c0392b0f;}
+    .ctx-sep{height:1px;background:var(--border);margin:4px 0;}
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useRef,useEffect,useCallback}=React;
+const CANVAS_W=820,CANVAS_H=620;
+const FAMILIES={
+  stand:{key:"stand",label:"Stand",color:"#7a2035"},
+  access:{key:"access",label:"Circulation",color:"#1a6fa8"},
+  service:{key:"service",label:"Service",color:"#2d7a4f"},
+};
+const ACCESS_ICONS=["🚪","🚶","⬆️","⬇️","🛗","🪜","🚧","🅿️","🚗","♿","🔄","🏃","🚕","🚌"];
+const ACCESS_TYPES=["Entrée principale","Sortie","Entrée secondaire","Sortie de secours","Escalier montant","Escalier descendant","Escalier","Ascenseur","Ascenseur PMR","Parking","Navette","Accès livraison","Zone réservée"];
+const SERVICE_ICONS=["🏥","💊","🔴","🆘","ℹ️","🗺️","📰","🍽️","☕","🧹","🔧","📦","🎤","🎧","📡","🌐","👶","🛍️","💳","🚿","🚻","♿","🔌","📷","🎥","🛡️"];
+const SERVICE_TYPES=["Accueil général","Renseignements","Poste de secours","Infirmerie","Salle de presse","Espace presse","Restaurant","Cafétéria","Vestiaires","Stockage exposants","Technique","Wifi","Toilettes","Toilettes PMR","Nurserie","Billetterie","Boutique","Recharge téléphones","Photographe","Sécurité","Point rencontre"];
+const INITIAL_STANDS=[
+  {id:1,family:"stand",name:"TechVision Pro",hall:"A",number:"A12",x:90,y:90,w:110,h:70,sector:"Technologie",description:"Solutions logicielles B2B pour la transformation digitale.",contact:"contact@techvision.fr",website:"www.techvision.fr",logo:"💻",color:"#1a6fa8",events:[{id:1,type:"promo",title:"–20% sur nos licences annuelles",date:"2026-05-19",desc:"Offre exclusive salon, valable jusqu'au 30 juin."},{id:2,type:"news",title:"Démo live à 14h",date:"2026-05-19",desc:"Venez découvrir notre nouvelle suite IA en démonstration."}]},
+  {id:2,family:"stand",name:"GreenBuild",hall:"A",number:"A18",x:230,y:90,w:100,h:70,sector:"Construction durable",description:"Matériaux écologiques et solutions d'isolation haute performance.",contact:"info@greenbuild.eu",website:"www.greenbuild.eu",logo:"🌿",color:"#2d7a4f",events:[{id:1,type:"news",title:"Prix Innovation Verte 2026",date:"2026-05-18",desc:"Lauréat du prix de l'innovation durable au dernier BATIMAT."},{id:2,type:"promo",title:"Échantillons gratuits",date:"2026-05-19",desc:"Repartez avec notre pack découverte d'isolants biosourcés."}]},
+  {id:3,family:"stand",name:"FinScope",hall:"B",number:"B04",x:90,y:250,w:100,h:70,sector:"Finance & Assurance",description:"Audit, conseil financier et solutions de conformité réglementaire.",contact:"hello@finscope.fr",website:"www.finscope.fr",logo:"📊",color:"#7a4f1a",events:[{id:1,type:"news",title:"Conférence : RegTech 2026",date:"2026-05-20",desc:"Salle Bordeaux à 10h — inscription sur le stand."}]},
+  {id:4,family:"stand",name:"MédiaStorm",hall:"B",number:"B11",x:230,y:250,w:110,h:70,sector:"Communication & Médias",description:"Agence de stratégie digitale, production vidéo et branding.",contact:"studio@mediastorm.fr",website:"www.mediastorm.fr",logo:"🎬",color:"#7a1a4f",events:[{id:1,type:"promo",title:"Audit de marque offert",date:"2026-05-19",desc:"Prenez RDV sur le stand pour un diagnostic gratuit."},{id:2,type:"news",title:"Showreel 2026 en avant-première",date:"2026-05-20",desc:"Diffusion exclusive de nos réalisations récentes."}]},
+  {id:5,family:"stand",name:"RoboFlex",hall:"C",number:"C07",x:160,y:420,w:120,h:70,sector:"Industrie & Robotique",description:"Robots collaboratifs et systèmes d'automatisation industrielle.",contact:"ventes@roboflex.com",website:"www.roboflex.com",logo:"🤖",color:"#1a4f7a",events:[{id:1,type:"news",title:"Lancement du RoboFlex X3",date:"2026-05-19",desc:"Premier cobot autonome adaptatif."},{id:2,type:"promo",title:"Financement 0% 12 mois",date:"2026-05-19",desc:"Pour toute commande passée pendant le salon."}]},
+];
+const INITIAL_ACCESS=[
+  {id:101,family:"access",name:"Entrée principale",subtype:"Entrée principale",icon:"🚪",x:355,y:555,w:90,h:42,color:"#1a6fa8",note:"Ouverture 8h–20h"},
+  {id:102,family:"access",name:"Ascenseur PMR",subtype:"Ascenseur PMR",icon:"🛗",x:370,y:88,w:52,h:52,color:"#1a6fa8",note:"Accès tous niveaux"},
+  {id:103,family:"access",name:"Escalier",subtype:"Escalier",icon:"🪜",x:440,y:250,w:52,h:52,color:"#1a6fa8",note:""},
+  {id:104,family:"access",name:"Parking",subtype:"Parking",icon:"🅿️",x:650,y:415,w:80,h:50,color:"#1a6fa8",note:"500 places — P2"},
+];
+const INITIAL_SERVICES=[
+  {id:201,family:"service",name:"Accueil",subtype:"Accueil général",icon:"ℹ️",x:600,y:88,w:80,h:52,color:"#2d7a4f",note:"Hall A, allée centrale"},
+  {id:202,family:"service",name:"Poste de secours",subtype:"Poste de secours",icon:"🏥",x:600,y:248,w:90,h:52,color:"#2d7a4f",note:"Médecin présent 9h–18h"},
+  {id:203,family:"service",name:"Salle de presse",subtype:"Salle de presse",icon:"📰",x:600,y:415,w:90,h:52,color:"#2d7a4f",note:"Accréditation obligatoire"},
+  {id:204,family:"service",name:"Restauration",subtype:"Restaurant",icon:"🍽️",x:480,y:88,w:80,h:52,color:"#2d7a4f",note:"Ouvert 11h30–14h30"},
+];
+const INITIAL_HALLS=[
+  {id:"A",name:"Hall A",color:"#1a6fa818",border:"#1a6fa8",x:60,y:60,w:350,h:116},
+  {id:"B",name:"Hall B",color:"#7a4f1a18",border:"#7a4f1a",x:60,y:216,w:350,h:116},
+  {id:"C",name:"Hall C",color:"#1a4f7a18",border:"#1a4f7a",x:60,y:390,w:350,h:116},
+];
+const HALL_COLORS=["#1a6fa8","#7a4f1a","#1a4f7a","#2d7a4f","#7a1a4f","#5a3a7a","#7a5a1a","#1a7a6a","#7a1a1a","#4f7a1a"];
+const ADMIN_CREDS={login:"admin",password:"expo2026"};
+const SECTORS=["Technologie","Construction durable","Finance & Assurance","Communication & Médias","Industrie & Robotique","Santé","Alimentation","Mode & Luxe","Autre"];
+const EVENT_TYPES=["news","promo","conference","workshop"];
+const EVENT_LABELS={news:"Actualité",promo:"Promotion",conference:"Conférence",workshop:"Atelier"};
+const EVENT_COLORS={news:"#1a6fa8",promo:"#a05c10",conference:"#6b3080",workshop:"#2d7a4f"};
+const STAND_COLORS=["#1a6fa8","#2d7a4f","#7a4f1a","#7a1a4f","#1a4f7a","#4f7a1a","#7a1a1a","#1a7a6a","#5a3a7a","#7a5a1a"];
+const STAND_EMOJIS=["🏢","💻","🌿","📊","🎬","🤖","🛍️","🍽️","🏥","⚡","🚀","🎨","📦","🔧","🌍"];
+const fmtDate=d=>{if(!d)return"";return new Date(d+"T00:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"});};
+const hx=(hex,a)=>{const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return`rgba(${r},${g},${b},${a})`;};
+const snapV=(v,g)=>g>0?Math.round(v/g)*g:v;
+const clampZ=z=>Math.min(3.5,Math.max(.25,z));
+/* SVG Icons */
+const Icon=({name,size=16})=>{
+  const s={width:size,height:size,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:"2"};
+  const ic={
+    search:<svg {...s}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>,
+    map:<svg {...s}><polygon points="3,6 9,3 15,6 21,3 21,18 15,21 9,18 3,21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>,
+    list:<svg {...s}><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>,
+    calendar:<svg {...s}><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
+    close:<svg {...s}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>,
+    plus:<svg {...s}><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>,
+    edit:<svg {...s}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
+    trash:<svg {...s}><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2v2"/></svg>,
+    back:<svg {...s}><polyline points="15,18 9,12 15,6"/></svg>,
+    admin:<svg {...s}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+    logout:<svg {...s}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>,
+    info:<svg {...s}><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>,
+    move:<svg {...s}><polyline points="5,9 2,12 5,15"/><polyline points="9,5 12,2 15,5"/><polyline points="15,19 12,22 9,19"/><polyline points="19,9 22,12 19,15"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>,
+    add_rect:<svg {...s}><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>,
+    undo:<svg {...s}><polyline points="9,14 4,9 9,4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>,
+    redo:<svg {...s}><polyline points="15,14 20,9 15,4"/><path d="M4 20v-7a4 4 0 0 1 4-4h12"/></svg>,
+    save:<svg {...s}><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg>,
+    duplicate:<svg {...s}><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>,
+    zoomin:<svg {...s}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>,
+    zoomout:<svg {...s}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>,
+  };
+  return ic[name]||null;
+};
+
+/* ItemShape: stand=rect, access=diamond, service=circle */
+function ItemShape({item,selected,hovered,readOnly,onMD,onDbl,onCtx,onResizeStart}){
+  const fc=item.color||FAMILIES[item.family]?.color||"#7a2035";
+  const cx=item.x+item.w/2,cy=item.y+item.h/2;
+  const isSel=selected,isH=hovered;
+  const handles=isSel&&!readOnly?[
+    {hx:item.x,hy:item.y,c:"nw"},{hx:cx,hy:item.y,c:"n"},{hx:item.x+item.w,hy:item.y,c:"ne"},
+    {hx:item.x+item.w,hy:cy,c:"e"},{hx:item.x+item.w,hy:item.y+item.h,c:"se"},
+    {hx:cx,hy:item.y+item.h,c:"s"},{hx:item.x,hy:item.y+item.h,c:"sw"},{hx:item.x,hy:cy,c:"w"}
+  ]:[];
+  const gProps={
+    style:{cursor:readOnly?"pointer":"move"},
+    onMouseDown:e=>{e.stopPropagation();onMD&&onMD(e);},
+    onDoubleClick:e=>{e.stopPropagation();onDbl&&onDbl();},
+    onContextMenu:e=>{e.preventDefault();e.stopPropagation();onCtx&&onCtx(e);},
+  };
+  const shortName=n=>n.length>13?n.slice(0,13)+"…":n;
+  const H=handles.map(({hx,hy,c})=>(
+    <rect key={c} x={hx-4} y={hy-4} width="8" height="8" rx="2" fill="#fff" stroke={fc} strokeWidth="1.5"
+      style={{cursor:`${c}-resize`}} onMouseDown={e=>{e.stopPropagation();onResizeStart&&onResizeStart(c,e);}}/>
+  ));
+  if(item.family==="access"){
+    const pts=`${cx},${item.y} ${item.x+item.w},${cy} ${cx},${item.y+item.h} ${item.x},${cy}`;
+    return(<g {...gProps}>
+      {isSel&&<polygon points={pts} fill="none" stroke={fc} strokeWidth="1" strokeDasharray="4,3" opacity=".35"
+        transform={`scale(1.12) translate(${(cx*(1-1/1.12)).toFixed(2)},${(cy*(1-1/1.12)).toFixed(2)})`}/>}
+      <polygon points={pts} fill={isSel?hx(fc,.28):isH?hx(fc,.2):hx(fc,.12)} stroke={isSel?"#7a2035":fc} strokeWidth={isSel?2.5:isH?2:1.5}/>
+      <text x={cx} y={cy-7} textAnchor="middle" dominantBaseline="middle" fontSize="15">{item.icon}</text>
+      <text x={cx} y={cy+9} textAnchor="middle" fill={isSel?"#1e1a17":"#6b5f57"} fontSize="8" fontFamily="DM Sans" fontWeight="500">{shortName(item.name)}</text>
+      {H}
+    </g>);
+  }
+  if(item.family==="service"){
+    const rx=item.w/2,ry=item.h/2;
+    return(<g {...gProps}>
+      {isSel&&<ellipse cx={cx} cy={cy} rx={rx+5} ry={ry+5} fill="none" stroke={fc} strokeWidth="1" strokeDasharray="4,3" opacity=".35"/>}
+      <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill={isSel?hx(fc,.28):isH?hx(fc,.2):hx(fc,.12)} stroke={isSel?"#7a2035":fc} strokeWidth={isSel?2.5:isH?2:1.5}/>
+      <text x={cx} y={cy-7} textAnchor="middle" dominantBaseline="middle" fontSize="15">{item.icon}</text>
+      <text x={cx} y={cy+9} textAnchor="middle" fill={isSel?"#1e1a17":"#6b5f57"} fontSize="8" fontFamily="DM Sans" fontWeight="500">{shortName(item.name)}</text>
+      {H}
+    </g>);
+  }
+  return(<g {...gProps}>
+    {isSel&&<rect x={item.x-3} y={item.y-3} width={item.w+6} height={item.h+6} rx="9" fill="none" stroke="#7a2035" strokeWidth="1" strokeDasharray="5,3" opacity=".45"/>}
+    <rect x={item.x} y={item.y} width={item.w} height={item.h} rx="6" fill={isSel?hx(fc,.28):isH?hx(fc,.18):hx(fc,.1)} stroke={isSel?"#7a2035":fc} strokeWidth={isSel?2.5:isH?2:1.5}/>
+    <text x={cx} y={item.y+22} textAnchor="middle" fill={fc} fontSize="15">{item.logo||item.icon}</text>
+    <text x={cx} y={item.y+37} textAnchor="middle" fill={isSel?"#1e1a17":"#6b5f57"} fontSize="9" fontFamily="DM Sans" fontWeight="500">{shortName(item.name)}</text>
+    {item.number&&<text x={cx} y={item.y+49} textAnchor="middle" fill={fc} fontSize="8" fontFamily="DM Sans">{item.number}</text>}
+    {item.events?.length>0&&<circle cx={item.x+item.w-8} cy={item.y+8} r="5" fill="#7a2035"/>}
+    {H}
+  </g>);
+}
+
+/* App */
+function App(){
+  const [stands,setStands]=useState(INITIAL_STANDS);
+  const [access,setAccess]=useState(INITIAL_ACCESS);
+  const [services,setServices]=useState(INITIAL_SERVICES);
+  const [halls,setHalls]=useState(INITIAL_HALLS);
+  const [view,setView]=useState("stands");
+  const [selId,setSelId]=useState(null);
+  const [selHallId,setSelHallId]=useState(null);
+  const [isAdmin,setIsAdmin]=useState(false);
+  const [showLogin,setShowLogin]=useState(false);
+  const [search,setSearch]=useState("");
+  const [filterFam,setFilterFam]=useState("all");
+  const [filterSector,setFilterSector]=useState("Tous");
+  const [toast,setToast]=useState(null);
+  const showToast=msg=>{setToast(msg);setTimeout(()=>setToast(null),2500);};
+  const goItem=(fam,id)=>{setSelId(`${fam}-${id}`);setSelHallId(null);setView("stands");};
+  const goHall=id=>{setSelHallId(id);setSelId(null);setView("stands");};
+  const allCards=[...stands,...access,...services];
+  const getItem=key=>{if(!key)return null;const[f,...rest]=key.split("-");const id=parseInt(rest.join("-"));return allCards.find(i=>i.family===f&&i.id===id);};
+  const sectors=["Tous",...Array.from(new Set(stands.map(s=>s.sector)))];
+  const filtered=allCards.filter(c=>{
+    const q=search.toLowerCase();
+    const mQ=!q||c.name.toLowerCase().includes(q)||(c.sector||"").toLowerCase().includes(q)||(c.subtype||"").toLowerCase().includes(q);
+    const mF=filterFam==="all"||c.family===filterFam;
+    const mS=c.family!=="stand"||filterSector==="Tous"||c.sector===filterSector;
+    return mQ&&mF&&mS;
+  });
+  return(<div className="app">
+    <Header view={view} setView={v=>{setView(v);setSelId(null);}} isAdmin={isAdmin} setIsAdmin={setIsAdmin} setShowLogin={setShowLogin}/>
+    <div className="main">
+      {view==="stands"&&!selId&&(<div className="panel">
+        <div className="search-wrap"><span className="search-icon"><Icon name="search" size={15}/></span>
+          <input className="search-input" placeholder="Rechercher un stand, service, circulation…" value={search} onChange={e=>setSearch(e.target.value)}/>
+        </div>
+        <div className="filter-row">
+          {[["all","Tout"],["stand","■ Stands"],["access","◆ Circulations"],["service","● Services"]].map(([k,l])=>(
+            <button key={k} className={`filter-chip ${k} ${filterFam===k?"active":""}`} onClick={()=>setFilterFam(k)}>{l}</button>
+          ))}
+          {filterFam==="stand"&&sectors.map(s=><button key={s} className={`filter-chip ${filterSector===s?"active":""}`} onClick={()=>setFilterSector(s)}>{s}</button>)}
+        </div>
+        {filtered.length===0?<div className="empty-state"><div className="empty-state-icon">🔍</div><div className="empty-state-text">Aucun élément trouvé</div></div>
+          :<div className="stands-grid">{filtered.map(c=><ItemCard key={`${c.family}-${c.id}`} item={c} onClick={()=>goItem(c.family,c.id)}/>)}</div>}
+      </div>)}
+      {view==="stands"&&selId&&<ItemDetail item={getItem(selId)} onBack={()=>setSelId(null)}/>}
+      {view==="map"&&<MapView stands={stands} access={access} services={services} halls={halls} onItemClick={goItem} onHallClick={goHall}/>}
+      {view==="agenda"&&<div className="panel"><AgendaView stands={stands} onStandClick={id=>goItem("stand",id)}/></div>}
+      {view==="admin"&&(isAdmin
+        ?<AdminPanel stands={stands} setStands={setStands} access={access} setAccess={setAccess} services={services} setServices={setServices} halls={halls} setHalls={setHalls} showToast={showToast}/>
+        :<div className="login-wrap"><LoginCard onLogin={(l,p)=>{if(l===ADMIN_CREDS.login&&p===ADMIN_CREDS.password){setIsAdmin(true);return true;}return false;}}/></div>
+      )}
+    </div>
+    {toast&&<div className="toast">{toast}</div>}
+    {showLogin&&!isAdmin&&(<div className="modal-overlay" onClick={()=>setShowLogin(false)}><div onClick={e=>e.stopPropagation()}>
+      <LoginCard onLogin={(l,p)=>{if(l===ADMIN_CREDS.login&&p===ADMIN_CREDS.password){setIsAdmin(true);setShowLogin(false);setView("admin");return true;}return false;}}/>
+    </div></div>)}
+  </div>);
+}
+
+function Header({view,setView,isAdmin,setIsAdmin,setShowLogin}){return(<header className="header">
+  <div className="header-logo">EXPO<span>Connect</span></div>
+  <nav className="header-nav">
+    <button className={`nav-btn ${view==="stands"?"active":""}`} onClick={()=>setView("stands")}><Icon name="list" size={14}/> Stands</button>
+    <button className={`nav-btn ${view==="map"?"active":""}`} onClick={()=>setView("map")}><Icon name="map" size={14}/> Plan</button>
+    <button className={`nav-btn ${view==="agenda"?"active":""}`} onClick={()=>setView("agenda")}><Icon name="calendar" size={14}/> Agenda</button>
+  </nav>
+  <div className="header-right">
+    {isAdmin?(<>
+      <button className={`nav-btn ${view==="admin"?"active":""}`} onClick={()=>setView("admin")}><Icon name="admin" size={14}/> Admin</button>
+      <div className="admin-badge"><Icon name="admin" size={12}/> Administrateur</div>
+      <button className="btn-icon" onClick={()=>{setIsAdmin(false);setView("stands");}}><Icon name="logout" size={15}/></button>
+    </>):(
+      <button className="btn-icon" onClick={()=>setShowLogin(true)}><Icon name="admin" size={15}/></button>
+    )}
+  </div>
+</header>);}
+
+function ItemCard({item,onClick}){
+  const fam=FAMILIES[item.family]||FAMILIES.stand;
+  const fc=item.color||fam.color;
+  return(<div className="stand-card" onClick={onClick}>
+    <div className="stand-card-accent" style={{background:fc}}/>
+    <div className="stand-card-body">
+      <div className="stand-card-header">
+        <div className="stand-emoji" style={{background:hx(fc,.1),borderColor:hx(fc,.25)}}>{item.logo||item.icon}</div>
+        <div className="stand-card-meta">
+          <span className="stand-family-badge" style={{background:hx(fc,.12),color:fc}}>{fam.label}</span>
+          <div className="stand-name">{item.name}</div>
+          {item.subtype&&<div className="stand-sub">{item.subtype}</div>}
+          {item.sector&&<div className="stand-sub">{item.sector}</div>}
+          {item.number&&<div className="stand-number">Stand {item.number}</div>}
+        </div>
+      </div>
+      {item.description&&<div className="stand-desc">{item.description}</div>}
+      {item.note&&<div className="stand-note">{item.note}</div>}
+      {item.events?.length>0&&<div className="stand-events-preview">
+        {item.events.slice(0,3).map(ev=>{const ec=EVENT_COLORS[ev.type]||"#1a6fa8";return(
+          <span key={ev.id} className="event-tag" style={{background:hx(ec,.1),color:ec}}>
+            <span className="event-tag-dot" style={{background:ec}}/>{EVENT_LABELS[ev.type]}
+          </span>);})}
+      </div>}
+    </div>
+  </div>);}
+
+function ItemDetail({item,onBack}){
+  if(!item)return null;
+  const fam=FAMILIES[item.family]||FAMILIES.stand;
+  const fc=item.color||fam.color;
+  return(<div className="detail-panel">
+    <div className="detail-hero">
+      <button className="detail-back" onClick={onBack}><Icon name="back" size={14}/> Retour</button>
+      <div className="detail-header">
+        <div className="detail-emoji" style={{background:hx(fc,.1),borderColor:hx(fc,.3)}}>{item.logo||item.icon}</div>
+        <div className="detail-title">
+          <div className="detail-name">{item.name}</div>
+          <div className="detail-chips">
+            <span className="detail-chip" style={{background:hx(fc,.12),color:fc,borderColor:hx(fc,.28)}}>{fam.label}</span>
+            {item.number&&<span className="detail-chip">Stand {item.number}</span>}
+            {item.subtype&&<span className="detail-chip">{item.subtype}</span>}
+            {item.sector&&<span className="detail-chip">{item.sector}</span>}
+            {item.hall&&<span className="detail-chip">Hall {item.hall}</span>}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div className="detail-body">
+      {item.description&&<div className="detail-section"><div className="detail-section-title">À propos</div><div className="detail-desc">{item.description}</div></div>}
+      {item.note&&<div className="detail-section"><div className="detail-section-title">Information</div><div className="detail-desc" style={{fontStyle:"italic"}}>{item.note}</div></div>}
+      {(item.contact||item.website)&&<div className="detail-section">
+        <div className="detail-section-title">Contact</div>
+        <div className="detail-contact">
+          {item.contact&&<div className="contact-row">✉️ <a href={`mailto:${item.contact}`}>{item.contact}</a></div>}
+          {item.website&&<div className="contact-row">🌐 <a href={`https://${item.website}`} target="_blank" rel="noreferrer">{item.website}</a></div>}
+        </div>
+      </div>}
+      {item.events?.length>0&&<div className="detail-section">
+        <div className="detail-section-title">Actualités & Agenda</div>
+        <div className="events-list">{item.events.map(ev=>{const ec=EVENT_COLORS[ev.type]||"#1a6fa8";return(
+          <div key={ev.id} className="event-card" style={{borderLeftColor:ec}}>
+            <div className="event-card-header">
+              <span className="event-type-badge" style={{background:hx(ec,.12),color:ec}}>{EVENT_LABELS[ev.type]}</span>
+              <span className="event-date">{fmtDate(ev.date)}</span>
+            </div>
+            <div className="event-title">{ev.title}</div>
+            <div className="event-desc">{ev.desc}</div>
+          </div>);})}</div>
+      </div>}
+    </div>
+  </div>);}
+
+function MapView({stands,access,services,halls,onItemClick,onHallClick}){
+  const wrapRef=useRef(null);
+  const [tr,setTr]=useState({x:0,y:0,scale:1});
+  const [hov,setHov]=useState(null);
+  const drag=useRef(null);const pinch=useRef(null);
+  const cS=s=>Math.min(4,Math.max(.3,s));
+  const onWheel=useCallback(e=>{e.preventDefault();setTr(t=>({...t,scale:cS(t.scale*(e.deltaY>0?.9:1.1))}));},[]);
+  useEffect(()=>{const el=wrapRef.current;if(!el)return;el.addEventListener("wheel",onWheel,{passive:false});return()=>el.removeEventListener("wheel",onWheel);},[onWheel]);
+  const onMD=e=>{drag.current={sx:e.clientX-tr.x,sy:e.clientY-tr.y};};
+  const onMM=e=>{if(!drag.current)return;setTr(t=>({...t,x:e.clientX-drag.current.sx,y:e.clientY-drag.current.sy}));};
+  const onMU=()=>{drag.current=null;};
+  const onTS=e=>{if(e.touches.length===1)drag.current={sx:e.touches[0].clientX-tr.x,sy:e.touches[0].clientY-tr.y};else if(e.touches.length===2){drag.current=null;const dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY;pinch.current={dist:Math.sqrt(dx*dx+dy*dy),scale:tr.scale};}};
+  const onTM=e=>{e.preventDefault();if(e.touches.length===1&&drag.current)setTr(t=>({...t,x:e.touches[0].clientX-drag.current.sx,y:e.touches[0].clientY-drag.current.sy}));else if(e.touches.length===2&&pinch.current){const dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY;setTr(t=>({...t,scale:cS(pinch.current.scale*(Math.sqrt(dx*dx+dy*dy)/pinch.current.dist))}));}};
+  const onTE=()=>{drag.current=null;pinch.current=null;};
+  const zoom=d=>setTr(t=>({...t,scale:cS(t.scale*(d>0?1.25:.8))}));
+  const isH=(f,id)=>hov&&hov.f===f&&hov.id===id;
+  const all=[...stands,...access,...services];
+  const hovItem=hov?all.find(i=>i.family===hov.f&&i.id===hov.id):null;
+  return(<div className="map-container">
+    <div className="map-toolbar">
+      <div className="map-toolbar-left">
+        <div className="map-title">Plan du salon</div>
+        <div className="zoom-btns">
+          <button className="zoom-btn" onClick={()=>zoom(1)}>＋</button>
+          <button className="zoom-btn" onClick={()=>zoom(-1)}>－</button>
+          <button className="zoom-btn" onClick={()=>setTr({x:0,y:0,scale:1})}>⊙</button>
+        </div>
+      </div>
+      <div className="map-hint">🤏 Pinch pour zoomer · Glisser pour naviguer · Double-clic pour voir le détail</div>
+    </div>
+    <div className="map-svg-wrap" ref={wrapRef} onMouseDown={onMD} onMouseMove={onMM} onMouseUp={onMU} onMouseLeave={onMU} onTouchStart={onTS} onTouchMove={onTM} onTouchEnd={onTE}>
+      <svg width={CANVAS_W} height={CANVAS_H} style={{transform:`translate(${tr.x}px,${tr.y}px) scale(${tr.scale})`,transformOrigin:"0 0",display:"block",userSelect:"none"}}>
+        <rect width={CANVAS_W} height={CANVAS_H} fill="#ece8e2"/>
+        {halls.map(h=><g key={h.id} style={{cursor:"pointer"}} onClick={()=>onHallClick&&onHallClick(h.id)}><rect x={h.x} y={h.y} width={h.w} height={h.h} fill={h.color} stroke={h.border} strokeWidth="1.5" rx="8" strokeDasharray="5,3"/><text x={h.x+10} y={h.y+20} fill={h.border} fontSize="13" fontWeight="700" fontFamily="Cormorant Garamond" opacity=".8">{h.name}</text><text x={h.x+h.w-10} y={h.y+20} fill={h.border} fontSize="9" textAnchor="end" fontFamily="DM Sans" opacity=".6">{stands.filter(s=>s.hall===h.id).length} stands</text></g>)}
+        <rect x={CANVAS_W/2-55} y={CANVAS_H-46} width="110" height="28" rx="5" fill="#7a203520" stroke="#7a203550"/>
+        <text x={CANVAS_W/2} y={CANVAS_H-26} fill="#7a2035" fontSize="11" textAnchor="middle" fontFamily="DM Sans" fontWeight="500">ENTRÉE</text>
+        <polygon points={`${CANVAS_W/2-10},${CANVAS_H-47} ${CANVAS_W/2+10},${CANVAS_H-47} ${CANVAS_W/2},${CANVAS_H-57}`} fill="#7a203580"/>
+        {all.map(item=>(
+          <g key={`${item.family}-${item.id}`}
+            onMouseEnter={()=>setHov({f:item.family,id:item.id})} onMouseLeave={()=>setHov(null)}>
+            <ItemShape item={item} hovered={isH(item.family,item.id)} readOnly={true}
+              onDbl={()=>onItemClick(item.family,item.id)}
+              onMD={()=>{}} onCtx={()=>{}}/>
+          </g>
+        ))}
+        {hovItem&&(()=>{
+          const cx=hovItem.x+hovItem.w/2,ty=Math.max(4,hovItem.y-46),tx=Math.min(cx,CANVAS_W-72);
+          const fc=hovItem.color||FAMILIES[hovItem.family]?.color||"#7a2035";
+          return(<g>
+            <rect x={tx-68} y={ty} width="136" height="38" rx="6" fill="#fff" stroke="#e0d9d1" style={{filter:"drop-shadow(0 2px 6px rgba(120,80,60,.14))"}}/>
+            <text x={tx} y={ty+14} textAnchor="middle" fill="#1e1a17" fontSize="10" fontFamily="DM Sans" fontWeight="500">{hovItem.name}</text>
+            <text x={tx} y={ty+28} textAnchor="middle" fill={fc} fontSize="9" fontFamily="DM Sans">{FAMILIES[hovItem.family]?.label}{hovItem.subtype?` · ${hovItem.subtype}`:""}</text>
+          </g>);
+        })()}
+      </svg>
+    </div>
+    <div className="map-legend-wrap">
+      <div className="map-legend-group">
+        <div className="map-legend-title">Stands</div>
+        <div className="map-legend-items">{stands.map(s=><div key={s.id} className="legend-item" onClick={()=>onItemClick("stand",s.id)}><div className="legend-dot" style={{background:s.color}}/>{s.number} {s.name}</div>)}</div>
+      </div>
+      <div style={{width:1,background:"var(--border)",alignSelf:"stretch",margin:"0 6px"}}/>
+      <div className="map-legend-group">
+        <div className="map-legend-title" style={{color:"var(--col-access)"}}>Circulations</div>
+        <div className="map-legend-items">{access.map(a=><div key={a.id} className="legend-item" onClick={()=>onItemClick("access",a.id)}><div className="legend-diamond" style={{background:a.color}}/>{a.icon} {a.name}</div>)}</div>
+      </div>
+      <div style={{width:1,background:"var(--border)",alignSelf:"stretch",margin:"0 6px"}}/>
+      <div className="map-legend-group">
+        <div className="map-legend-title" style={{color:"var(--col-service)"}}>Services</div>
+        <div className="map-legend-items">{services.map(s=><div key={s.id} className="legend-item" onClick={()=>onItemClick("service",s.id)}><div className="legend-circle" style={{background:s.color}}/>{s.icon} {s.name}</div>)}</div>
+      </div>
+    </div>
+  </div>);}
+
+function HallDetail({hall,stands,access,services,onBack,onItemClick}){
+  if(!hall)return null;
+  const bc=hall.border||"#1a6fa8";
+  const hallStands=stands.filter(s=>s.hall===hall.id);
+  const hallServices=services.filter(s=>{
+    const cx=s.x+s.w/2,cy=s.y+s.h/2;
+    return cx>=hall.x&&cx<=hall.x+hall.w&&cy>=hall.y&&cy<=hall.y+hall.h;
+  });
+  const hallAccess=access.filter(a=>{
+    const cx=a.x+a.w/2,cy=a.y+a.h/2;
+    return cx>=hall.x&&cx<=hall.x+hall.w&&cy>=hall.y&&cy<=hall.y+hall.h;
+  });
+  return(<div className="detail-panel">
+    <div className="detail-hero">
+      <button className="detail-back" onClick={onBack}><span style={{marginRight:4}}>function AgendaView({stands,onStandClick}){#8592;</span> Retour au plan</button>
+      <div className="detail-header">
+        <div className="detail-emoji" style={{background:hx(bc,.12),borderColor:hx(bc,.3),fontSize:"28px"}}>🏛️</div>
+        <div className="detail-title">
+          <div className="detail-name">{hall.name}</div>
+          <div className="detail-chips">
+            <span className="detail-chip" style={{background:hx(bc,.12),color:bc,borderColor:hx(bc,.3)}}>{hallStands.length} stand{hallStands.length!==1?"s":""}</span>
+            {hallAccess.length>0function AgendaView({stands,onStandClick}){function AgendaView({stands,onStandClick}){<span className="detail-chip">{hallAccess.length} circulation{hallAccess.length!==1?"s":""}</span>}
+            {hallServices.length>0function AgendaView({stands,onStandClick}){function AgendaView({stands,onStandClick}){<span className="detail-chip">{hallServices.length} service{hallServices.length!==1?"s":""}</span>}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div className="detail-body">
+      {hallStands.length>0function AgendaView({stands,onStandClick}){function AgendaView({stands,onStandClick}){<div className="detail-section">
+        <div className="detail-section-title" style={{color:bc}}>Stands</div>
+        <div className="hall-stands-grid">
+          {hallStands.map(s=>(<div key={s.id} className="hall-stand-chip" onClick={()=>onItemClick("stand",s.id)}>
+            <span className="hall-stand-emoji">{s.logo}</span>
+            <div><div className="hall-stand-name">{s.name}</div><div className="hall-stand-num">Stand {s.number} · {s.sector}</div></div>
+          </div>))}
+        </div>
+      </div>}
+      {hallAccess.length>0function AgendaView({stands,onStandClick}){function AgendaView({stands,onStandClick}){<div className="detail-section">
+        <div className="detail-section-title" style={{color:"var(--col-access)"}}>Circulations</div>
+        <div className="hall-stands-grid">
+          {hallAccess.map(a=>(<div key={a.id} className="hall-stand-chip" style={{borderColor:hx("#1a6fa8",.3)}} onClick={()=>onItemClick("access",a.id)}>
+            <span className="hall-stand-emoji">{a.icon}</span>
+            <div><div className="hall-stand-name">{a.name}</div><div className="hall-stand-num">{a.subtype}{a.note?` · ${a.note}`:""}</div></div>
+          </div>))}
+        </div>
+      </div>}
+      {hallServices.length>0function AgendaView({stands,onStandClick}){function AgendaView({stands,onStandClick}){<div className="detail-section">
+        <div className="detail-section-title" style={{color:"var(--col-service)"}}>Services</div>
+        <div className="hall-stands-grid">
+          {hallServices.map(s=>(<div key={s.id} className="hall-stand-chip" style={{borderColor:hx("#2d7a4f",.3)}} onClick={()=>onItemClick("service",s.id)}>
+            <span className="hall-stand-emoji">{s.icon}</span>
+            <div><div className="hall-stand-name">{s.name}</div><div className="hall-stand-num">{s.subtype}{s.note?` · ${s.note}`:""}</div></div>
+          </div>))}
+        </div>
+      </div>}
+      {hallStands.length===0function AgendaView({stands,onStandClick}){function AgendaView({stands,onStandClick}){hallAccess.length===0function AgendaView({stands,onStandClick}){function AgendaView({stands,onStandClick}){hallServices.length===0function AgendaView({stands,onStandClick}){function AgendaView({stands,onStandClick}){<div className="empty-state"><div className="empty-state-icon">🏛️</div><div className="empty-state-text">Ce hall ne contient aucun élément pour le moment.</div></div>}
+    </div>
+  </div>);}
+
+function AgendaView({stands,onStandClick}){
+  const all=stands.flatMap(s=>s.events.map(ev=>({...ev,sn:s.name,si:s.id,sc:s.color})));
+  all.sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+  const bd={};all.forEach(ev=>{const d=ev.date||"Sans date";if(!bd[d])bd[d]=[];bd[d].push(ev);});
+  if(!Object.keys(bd).length)return<div className="empty-state"><div className="empty-state-icon">📅</div><div className="empty-state-text">Aucun événement</div></div>;
+  return(<>{Object.entries(bd).map(([d,evs])=>(
+    <div key={d} className="agenda-day">
+      <div className="agenda-day-title">{d==="Sans date"?d:fmtDate(d)}</div>
+      {evs.map((ev,i)=>{const ec=EVENT_COLORS[ev.type]||"#1a6fa8";return(
+        <div key={i} className="agenda-event-row" onClick={()=>onStandClick(ev.si)}>
+          <div className="agenda-event-bar" style={{background:ev.sc}}/>
+          <div className="agenda-event-content">
+            <div className="agenda-event-stand">{ev.sn}</div>
+            <div className="agenda-event-title">{ev.title}</div>
+            <span className="agenda-event-type" style={{background:hx(ec,.1),color:ec}}>{EVENT_LABELS[ev.type]}</span>
+          </div>
+        </div>);})}
+    </div>))}</>);}
+
+function LoginCard({onLogin}){
+  const [l,setL]=useState("");const [p,setP]=useState("");const [e,setE]=useState("");
+  const sub=()=>{if(!onLogin(l,p))setE("Identifiants incorrects");};
+  return(<div className="login-card">
+    <div className="login-logo"><div className="login-logo-text">EXPO<span style={{color:"#a0948c",fontStyle:"italic",fontWeight:300}}>Connect</span></div><div className="login-subtitle">Espace Administrateur</div></div>
+    <div className="login-divider"/>
+    <div className="login-form">
+      {e&&<div className="login-error">{e}</div>}
+      <div className="form-group"><label className="form-label">Identifiant</label><input className="form-input" value={l} onChange={e=>setL(e.target.value)} placeholder="admin"/></div>
+      <div className="form-group"><label className="form-label">Mot de passe</label><input className="form-input" type="password" value={p} onChange={e=>setP(e.target.value)} onKeyDown={e=>e.key==="Enter"&&sub()}/></div>
+      <button className="btn-primary" style={{width:"100%",justifyContent:"center"}} onClick={sub}><Icon name="admin" size={14}/> Se connecter</button>
+      <div style={{fontSize:11,color:"var(--text3)",textAlign:"center"}}>Démo : admin / expo2026</div>
+    </div>
+  </div>);}
+function AdminPanel({stands,setStands,access,setAccess,services,setServices,halls,setHalls,showToast}){
+  const [tab,setTab]=useState("dashboard");
+  const [editItem,setEditItem]=useState(null);
+  const [editEv,setEditEv]=useState(null);
+  const [confirm,setConfirm]=useState(null);
+  const totalEvts=stands.reduce((a,s)=>a+s.events.length,0);
+  const saveStand=d=>{if(d.id){setStands(p=>p.map(s=>s.id===d.id?{...s,...d}:s));showToast("Stand mis à jour ✓");}else{const nid=Math.max(0,...stands.map(s=>s.id))+1;setStands(p=>[...p,{...d,id:nid,family:"stand",events:[]}]);showToast("Stand créé ✓");}setEditItem(null);};
+  const savePOI=(fam,d)=>{const setter=fam==="access"?setAccess:setServices;const list=fam==="access"?access:services;if(d.id){setter(p=>p.map(i=>i.id===d.id?{...i,...d}:i));showToast("Mis à jour ✓");}else{const nid=Math.max(0,...list.map(i=>i.id),fam==="access"?100:200)+1;setter(p=>[...p,{...d,id:nid,family:fam}]);showToast("Créé ✓");}setEditItem(null);};
+  const deleteItm=(fam,id)=>setConfirm({msg:"Supprimer cet élément ?",onConfirm:()=>{
+    if(fam==="stand")setStands(p=>p.filter(s=>s.id!==id));
+    if(fam==="access")setAccess(p=>p.filter(a=>a.id!==id));
+    if(fam==="service")setServices(p=>p.filter(s=>s.id!==id));
+    showToast("Supprimé");setConfirm(null);
+  }});
+  const saveEv=(sid,ev)=>{setStands(p=>p.map(s=>{if(s.id!==sid)return s;if(ev.id)return{...s,events:s.events.map(e=>e.id===ev.id?ev:e)};const nid=Math.max(0,...s.events.map(e=>e.id))+1;return{...s,events:[...s.events,{...ev,id:nid}]};}));showToast("Événement sauvegardé ✓");setEditEv(null);};
+  const delEv=(sid,eid)=>setConfirm({msg:"Supprimer cet événement ?",onConfirm:()=>{setStands(p=>p.map(s=>s.id!==sid?s:{...s,events:s.events.filter(e=>e.id!==eid)}));showToast("Supprimé");setConfirm(null);}});
+  const nav=[
+    {id:"dashboard",label:"Tableau de bord",icon:"info"},
+    {id:"plan",label:"Éditeur de plan",icon:"map"},
+    null,
+    {id:"stands",label:"Stands",icon:"list"},
+    {id:"access",label:"Circulations",icon:"move"},
+    {id:"service",label:"Services",icon:"admin"},
+    null,
+    {id:"events",label:"Événements",icon:"calendar"},
+  ];
+  const POITable=({list,fam})=>(<table className="data-table">
+    <thead><tr><th>Icône</th><th>Nom</th><th>Type</th><th>Note</th><th>Actions</th></tr></thead>
+    <tbody>{list.map(a=><tr key={a.id}>
+      <td style={{fontSize:20}}>{a.icon}</td><td style={{fontWeight:500}}>{a.name}</td>
+      <td style={{color:FAMILIES[fam].color}}>{a.subtype}</td>
+      <td style={{color:"var(--text2)",fontSize:12}}>{a.note||"—"}</td>
+      <td><div className="table-actions">
+        <button className="btn-secondary" style={{padding:"5px 10px",fontSize:12}} onClick={()=>setEditItem({fam,item:a})}><Icon name="edit" size={13}/> Éditer</button>
+        <button className="btn-danger" onClick={()=>deleteItm(fam,a.id)}><Icon name="trash" size={13}/></button>
+      </div></td>
+    </tr>)}</tbody>
+  </table>);
+  return(<div className="admin-layout">
+    <div className="admin-sidebar">
+      <div className="admin-sidebar-title">Administration</div>
+      {nav.map((n,i)=>n===null?<div key={i} className="sidebar-sep"/>:
+        <button key={n.id} className={`sidebar-item ${tab===n.id?"active":""}`} onClick={()=>setTab(n.id)}><Icon name={n.icon} size={14}/>{n.label}</button>
+      )}
+    </div>
+    {tab==="plan"
+      ?<PlanEditor stands={stands} setStands={setStands} access={access} setAccess={setAccess} services={services} setServices={setServices} halls={halls} setHalls={setHalls} showToast={showToast}/>
+      :<div className="admin-content">
+        {tab==="dashboard"&&(<>
+          <div className="admin-header"><div className="admin-page-title">Tableau de bord</div></div>
+          <div className="stats-grid">
+            <div className="stat-card"><div className="stat-value">{stands.length}</div><div className="stat-label">Stands</div></div>
+            <div className="stat-card"><div className="stat-value" style={{color:"var(--col-access)"}}>{access.length}</div><div className="stat-label">Circulations</div></div>
+            <div className="stat-card"><div className="stat-value" style={{color:"var(--col-service)"}}>{services.length}</div><div className="stat-label">Services</div></div>
+            <div className="stat-card"><div className="stat-value">{totalEvts}</div><div className="stat-label">Événements</div></div>
+          </div>
+          <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+            <button className="btn-primary" onClick={()=>setTab("plan")}><Icon name="map" size={14}/> Éditeur de plan</button>
+            <button className="btn-primary" onClick={()=>{setTab("stands");setEditItem({fam:"stand",item:{}});}}><Icon name="plus" size={14}/> Nouveau stand</button>
+            <button className="btn-primary access" onClick={()=>{setTab("access");setEditItem({fam:"access",item:{}});}}><Icon name="plus" size={14}/> Nouvelle circulation</button>
+            <button className="btn-primary service" onClick={()=>{setTab("service");setEditItem({fam:"service",item:{}});}}><Icon name="plus" size={14}/> Nouveau service</button>
+          </div>
+        </>)}
+        {tab==="stands"&&(<>
+          <div className="admin-header"><div className="admin-page-title">Stands</div><button className="btn-primary" onClick={()=>setEditItem({fam:"stand",item:{}})}><Icon name="plus" size={14}/> Nouveau</button></div>
+          <table className="data-table"><thead><tr><th>Logo</th><th>Nom</th><th>N°</th><th>Hall</th><th>Secteur</th><th>Évts</th><th>Actions</th></tr></thead>
+            <tbody>{stands.map(s=><tr key={s.id}>
+              <td style={{fontSize:20}}>{s.logo}</td><td style={{fontWeight:500}}>{s.name}</td>
+              <td><span style={{color:"var(--accent)",fontWeight:500}}>{s.number}</span></td>
+              <td>{s.hall}</td><td style={{color:"var(--text2)"}}>{s.sector}</td><td>{s.events.length}</td>
+              <td><div className="table-actions">
+                <button className="btn-secondary" style={{padding:"5px 10px",fontSize:12}} onClick={()=>setEditItem({fam:"stand",item:s})}><Icon name="edit" size={13}/> Éditer</button>
+                <button className="btn-danger" onClick={()=>deleteItm("stand",s.id)}><Icon name="trash" size={13}/></button>
+              </div></td>
+            </tr>)}</tbody>
+          </table>
+        </>)}
+        {tab==="access"&&(<>
+          <div className="admin-header"><div className="admin-page-title" style={{color:"var(--col-access)"}}>Circulations</div><button className="btn-primary access" onClick={()=>setEditItem({fam:"access",item:{}})}><Icon name="plus" size={14}/> Nouveau</button></div>
+          <POITable list={access} fam="access"/>
+        </>)}
+        {tab==="service"&&(<>
+          <div className="admin-header"><div className="admin-page-title" style={{color:"var(--col-service)"}}>Services</div><button className="btn-primary service" onClick={()=>setEditItem({fam:"service",item:{}})}><Icon name="plus" size={14}/> Nouveau</button></div>
+          <POITable list={services} fam="service"/>
+        </>)}
+        {tab==="events"&&(<>
+          <div className="admin-header"><div className="admin-page-title">Événements</div></div>
+          {stands.map(s=><div key={s.id} style={{marginBottom:28}}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
+              <div style={{display:"flex",alignItems:"center",gap:10}}><span style={{fontSize:18}}>{s.logo}</span><span style={{fontFamily:"Cormorant Garamond,serif",fontSize:17}}>{s.name}</span><span style={{fontSize:11,color:"var(--accent)"}}>{s.number}</span></div>
+              <button className="btn-primary" style={{padding:"6px 12px",fontSize:12}} onClick={()=>setEditEv({sid:s.id,ev:{}})}><Icon name="plus" size={12}/> Ajouter</button>
+            </div>
+            {s.events.length===0?<div style={{color:"var(--text3)",fontSize:13,paddingLeft:8}}>Aucun événement</div>:
+            <table className="data-table"><thead><tr><th>Type</th><th>Titre</th><th>Date</th><th>Actions</th></tr></thead>
+              <tbody>{s.events.map(ev=>{const ec=EVENT_COLORS[ev.type]||"#1a6fa8";return(<tr key={ev.id}>
+                <td><span className="event-type-badge" style={{background:hx(ec,.1),color:ec}}>{EVENT_LABELS[ev.type]}</span></td>
+                <td>{ev.title}</td><td style={{color:"var(--text2)"}}>{fmtDate(ev.date)}</td>
+                <td><div className="table-actions">
+                  <button className="btn-secondary" style={{padding:"5px 10px",fontSize:12}} onClick={()=>setEditEv({sid:s.id,ev})}><Icon name="edit" size={13}/> Éditer</button>
+                  <button className="btn-danger" onClick={()=>delEv(s.id,ev.id)}><Icon name="trash" size={13}/></button>
+                </div></td>
+              </tr>);})}</tbody>
+            </table>}
+            <div className="divider" style={{marginTop:16}}/>
+          </div>)}
+        </>)}
+      </div>
+    }
+    {editItem&&editItem.fam==="stand"&&<StandModal stand={editItem.item} onSave={saveStand} onClose={()=>setEditItem(null)}/>}
+    {editItem&&(editItem.fam==="access"||editItem.fam==="service")&&<POIModal fam={editItem.fam} item={editItem.item} onSave={d=>savePOI(editItem.fam,d)} onClose={()=>setEditItem(null)}/>}
+    {editEv&&<EventModal sid={editEv.sid} ev={editEv.ev} onSave={saveEv} onClose={()=>setEditEv(null)}/>}
+    {confirm&&<ConfirmModal msg={confirm.msg} onConfirm={confirm.onConfirm} onClose={()=>setConfirm(null)}/>}
+  </div>);}
+function PlanEditor({stands,setStands,access,setAccess,services,setServices,halls,setHalls,showToast}){
+  const canvasRef=useRef(null);
+  const [selKey,setSelKey]=useState(null);
+  const [tool,setTool]=useState("select");
+  const [snapOn,setSnapOn]=useState(true);
+  const [gridSize,setGridSize]=useState(20);
+  const [showGrid,setShowGrid]=useState(true);
+  const [zoom,setZoom]=useState(1);
+  const [offset,setOffset]=useState({x:20,y:20});
+  const [status,setStatus]=useState("Prêt");
+  const [hist,setHist]=useState([{stands,access,services}]);
+  const [histIdx,setHistIdx]=useState(0);
+  const [ctxMenu,setCtxMenu]=useState(null);
+  const [drawing,setDrawing]=useState(null);
+  const [editModal,setEditModal]=useState(null);
+  const [confirm,setConfirm]=useState(null);
+  const [selHallKey,setSelHallKey]=useState(null); // selected hall id in editor
+  const [editHallModal,setEditHallModal]=useState(null);
+  const dragRef=useRef(null);
+  const resizeRef=useRef(null);
+  const hallDragRef=useRef(null);
+  const hallResizeRef=useRef(null);
+  const panRef=useRef(null);
+  const snap=v=>snapOn?Math.round(v/gridSize)*gridSize:v;
+  const all=useCallback(()=>[...stands,...access,...services],[stands,access,services]);
+  const getByKey=k=>{if(!k)return null;const[f,...r]=k.split("-");const id=parseInt(r.join("-"));return all().find(i=>i.family===f&&i.id===id);};
+  const selHall=halls.find(h=>h.id===selHallKey)||null;
+  const selItem=getByKey(selKey);
+  const pushHist=useCallback((ns,na,nv)=>{setHist(h=>{const next=h.slice(0,histIdx+1);next.push({stands:ns,access:na,services:nv});return next;});setHistIdx(i=>i+1);},[histIdx]);
+  const undo=()=>{if(histIdx>0){const ni=histIdx-1;const h=hist[ni];setStands(h.stands);setAccess(h.access);setServices(h.services);setHistIdx(ni);showToast("Annulé");}};
+  const redo=()=>{if(histIdx<hist.length-1){const ni=histIdx+1;const h=hist[ni];setStands(h.stands);setAccess(h.access);setServices(h.services);setHistIdx(ni);showToast("Rétabli");}};
+  const svgCoords=useCallback(e=>{const rect=canvasRef.current?.getBoundingClientRect();if(!rect)return{x:0,y:0};return{x:(e.clientX-rect.left-offset.x)/zoom,y:(e.clientY-rect.top-offset.y)/zoom};},[offset,zoom]);
+  const updItem=(fam,id,patch)=>{
+    const ns=fam==="stand"?stands.map(s=>s.id===id?{...s,...patch}:s):stands;
+    const na=fam==="access"?access.map(a=>a.id===id?{...a,...patch}:a):access;
+    const nv=fam==="service"?services.map(s=>s.id===id?{...s,...patch}:s):services;
+    setStands(ns);setAccess(na);setServices(nv);return{ns,na,nv};
+  };
+  const onWheel=useCallback(e=>{e.preventDefault();setZoom(z=>clampZ(z*(e.deltaY<0?1.1:.9)));},[]);
+  useEffect(()=>{const el=canvasRef.current;if(!el)return;el.addEventListener("wheel",onWheel,{passive:false});return()=>el.removeEventListener("wheel",onWheel);},[onWheel]);
+  const onCanvasMD=e=>{setCtxMenu(null);if(tool==="select"){panRef.current={sx:e.clientX-offset.x,sy:e.clientY-offset.y};setSelKey(null);}if(tool.startsWith("draw")){const c=svgCoords(e);setDrawing({sx:snap(c.x),sy:snap(c.y),ex:snap(c.x),ey:snap(c.y)});}};
+  const onMM=useCallback(e=>{
+    if(panRef.current){setOffset({x:e.clientX-panRef.current.sx,y:e.clientY-panRef.current.sy});return;}
+    if(hallDragRef.current){const{id,ox,oy}=hallDragRef.current;const c=svgCoords(e);const nx=snap(c.x-ox),ny=snap(c.y-oy);setHalls(p=>p.map(h=>h.id===id?{...h,x:Math.max(0,nx),y:Math.max(0,ny)}:h));setStatus(`Hall X=${Math.round(nx)} Y=${Math.round(ny)}`);return;}
+    if(hallResizeRef.current){const{id,handle,ox,oy,sx,sy,sw,sh}=hallResizeRef.current;const c=svgCoords(e);const dx=snap(c.x)-snap(ox),dy=snap(c.y)-snap(oy);let nx=sx,ny=sy,nw=sw,nh=sh;if(handle.includes("e"))nw=Math.max(60,sw+dx);if(handle.includes("s"))nh=Math.max(40,sh+dy);if(handle.includes("w")){nw=Math.max(60,sw-dx);nx=sx+dx;}if(handle.includes("n")){nh=Math.max(40,sh-dy);ny=sy+dy;}setHalls(p=>p.map(h=>h.id===id?{...h,x:snap(nx),y:snap(ny),w:snap(nw),h:snap(nh)}:h));setStatus(`Hall L=${Math.round(nw)} H=${Math.round(nh)}`);return;}
+    if(dragRef.current){const{fam,id,ox,oy}=dragRef.current;const c=svgCoords(e);const nx=snap(c.x-ox),ny=snap(c.y-oy);updItem(fam,id,{x:Math.max(0,nx),y:Math.max(0,ny)});setStatus(`X=${Math.round(nx)} Y=${Math.round(ny)}`);return;}
+    if(resizeRef.current){const{fam,id,handle,ox,oy,sx,sy,sw,sh}=resizeRef.current;const c=svgCoords(e);const dx=snap(c.x)-snap(ox),dy=snap(c.y)-snap(oy);let nx=sx,ny=sy,nw=sw,nh=sh;if(handle.includes("e"))nw=Math.max(36,sw+dx);if(handle.includes("s"))nh=Math.max(28,sh+dy);if(handle.includes("w")){nw=Math.max(36,sw-dx);nx=sx+dx;}if(handle.includes("n")){nh=Math.max(28,sh-dy);ny=sy+dy;}updItem(fam,id,{x:snap(nx),y:snap(ny),w:snap(nw),h:snap(nh)});setStatus(`L=${Math.round(nw)} H=${Math.round(nh)}`);return;}
+    if(drawing){const c=svgCoords(e);setDrawing(d=>({...d,ex:snap(c.x),ey:snap(c.y)}));}
+  },[svgCoords,dragRef,resizeRef,hallDragRef,hallResizeRef,panRef,drawing,snap,stands,access,services,halls,setHalls]);
+  const onMU=useCallback(()=>{
+    if(panRef.current){panRef.current=null;setStatus("Prêt");return;}
+    if(hallDragRef.current){hallDragRef.current=null;setStatus("Prêt");return;}
+    if(hallResizeRef.current){hallResizeRef.current=null;setStatus("Prêt");return;}
+    if(dragRef.current){pushHist(stands,access,services);dragRef.current=null;setStatus("Prêt");return;}
+    if(resizeRef.current){pushHist(stands,access,services);resizeRef.current=null;setStatus("Prêt");return;}
+    if(drawing){
+      const{sx,sy,ex,ey}=drawing;
+      const x=Math.min(sx,ex),y=Math.min(sy,ey),w=Math.abs(ex-sx),h=Math.abs(ey-sy);
+      if(w>20&&h>20){
+        const df=tool==="draw-access"?"access":tool==="draw-service"?"service":"stand";
+        if(df==="stand"){const nid=Math.max(0,...stands.map(s=>s.id))+1;const ns={id:nid,family:"stand",name:`Stand ${nid}`,number:`X${nid}`,hall:"A",x:snap(x),y:snap(y),w:snap(w),h:snap(h),sector:SECTORS[0],description:"",contact:"",website:"",logo:"🏢",color:STAND_COLORS[nid%STAND_COLORS.length],events:[]};const nextS=[...stands,ns];setStands(nextS);pushHist(nextS,access,services);setSelKey(`stand-${nid}`);setEditModal({fam:"stand",item:ns});}
+        else if(df==="access"){const nid=Math.max(0,...access.map(a=>a.id),100)+1;const na={id:nid,family:"access",name:"Circulation",subtype:ACCESS_TYPES[0],icon:"🚪",x:snap(x),y:snap(y),w:snap(w),h:snap(h),color:"#1a6fa8",note:""};const nextA=[...access,na];setAccess(nextA);pushHist(stands,nextA,services);setSelKey(`access-${nid}`);setEditModal({fam:"access",item:na});}
+        else{const nid=Math.max(0,...services.map(s=>s.id),200)+1;const nv={id:nid,family:"service",name:"Service",subtype:SERVICE_TYPES[0],icon:"ℹ️",x:snap(x),y:snap(y),w:snap(w),h:snap(h),color:"#2d7a4f",note:""};const nextV=[...services,nv];setServices(nextV);pushHist(stands,access,nextV);setSelKey(`service-${nid}`);setEditModal({fam:"service",item:nv});}
+        showToast("Élément créé — renseignez ses informations");setTool("select");
+      }
+      setDrawing(null);
+    }
+  },[stands,access,services,drawing,tool,pushHist,snap,showToast]);
+  const onItemMD=(fam,id,e)=>{if(tool!=="select")return;e.stopPropagation();const c=svgCoords(e);const item=all().find(i=>i.family===fam&&i.id===id);if(!item)return;dragRef.current={fam,id,ox:c.x-item.x,oy:c.y-item.y};setSelKey(`${fam}-${id}`);setSelHallKey(null);setStatus(`Déplacement de ${item.name}…`);};
+  const onResizeStart=(fam,id,handle,e)=>{e.stopPropagation();const c=svgCoords(e);const item=all().find(i=>i.family===fam&&i.id===id);if(!item)return;resizeRef.current={fam,id,handle,ox:c.x,oy:c.y,sx:item.x,sy:item.y,sw:item.w,sh:item.h};};
+  const onItemCtx=(fam,id,e)=>{e.preventDefault();e.stopPropagation();setSelKey(`${fam}-${id}`);setCtxMenu({x:e.clientX,y:e.clientY,fam,id});};
+  // Hall editor handlers
+  const onHallMD=(id,e)=>{if(tool!=="select")return;e.stopPropagation();const c=svgCoords(e);const h=halls.find(x=>x.id===id);if(!h)return;hallDragRef.current={id,ox:c.x-h.x,oy:c.y-h.y};setSelHallKey(id);setSelKey(null);setStatus(`Déplacement de ${h.name}…`);};
+  const onHallResizeStart=(id,handle,e)=>{e.stopPropagation();const c=svgCoords(e);const h=halls.find(x=>x.id===id);if(!h)return;hallResizeRef.current={id,handle,ox:c.x,oy:c.y,sx:h.x,sy:h.y,sw:h.w,sh:h.h};};
+  const createHall=()=>{const nid="H"+(halls.length+1);const nc=HALL_COLORS[halls.length%HALL_COLORS.length];const nh={id:nid,name:`Hall ${nid}`,color:hx(nc,.12),border:nc,x:80,y:80,w:260,h:100};setHalls(p=>[...p,nh]);setSelHallKey(nid);setSelKey(null);showToast("Hall créé");};
+  const deleteHall=id=>setConfirm({msg:"Supprimer ce hall ? Les stands associés ne seront pas supprimés.",onConfirm:()=>{setHalls(p=>p.filter(h=>h.id!==id));setSelHallKey(null);setConfirm(null);showToast("Hall supprimé");}});
+  const updHall=(id,patch)=>setHalls(p=>p.map(h=>h.id===id?{...h,...patch}:h));
+  const updHallColor=(id,col)=>updHall(id,{border:col,color:hx(col,.12)});
+  const dupItem=(fam,id)=>{const item=all().find(i=>i.family===fam&&i.id===id);if(!item)return;if(fam==="stand"){const nid=Math.max(0,...stands.map(s=>s.id))+1;const n=[...stands,{...item,id:nid,name:item.name+" (copie)",x:item.x+20,y:item.y+20,events:[]}];setStands(n);pushHist(n,access,services);setSelKey(`stand-${nid}`);}else if(fam==="access"){const nid=Math.max(0,...access.map(a=>a.id))+1;const n=[...access,{...item,id:nid,x:item.x+20,y:item.y+20}];setAccess(n);pushHist(stands,n,services);setSelKey(`access-${nid}`);}else{const nid=Math.max(0,...services.map(s=>s.id))+1;const n=[...services,{...item,id:nid,x:item.x+20,y:item.y+20}];setServices(n);pushHist(stands,access,n);setSelKey(`service-${nid}`);}showToast("Dupliqué");};
+  const delItem=(fam,id)=>setConfirm({msg:"Supprimer cet élément ?",onConfirm:()=>{if(fam==="stand"){const n=stands.filter(s=>s.id!==id);setStands(n);pushHist(n,access,services);}if(fam==="access"){const n=access.filter(a=>a.id!==id);setAccess(n);pushHist(stands,n,services);}if(fam==="service"){const n=services.filter(s=>s.id!==id);setServices(n);pushHist(stands,access,n);}setSelKey(null);setConfirm(null);showToast("Supprimé");}});
+  const align=mode=>{if(!selItem)return;let p={};const{x,y,w,h}=selItem;if(mode==="left")p={x:0};if(mode==="right")p={x:CANVAS_W-w};if(mode==="top")p={y:0};if(mode==="bottom")p={y:CANVAS_H-h};if(mode==="cx")p={x:Math.round((CANVAS_W-w)/2)};if(mode==="cy")p={y:Math.round((CANVAS_H-h)/2)};const{ns,na,nv}=updItem(selItem.family,selItem.id,p);pushHist(ns,na,nv);showToast("Aligné");};
+  const updProp=(k,v)=>{if(!selItem)return;updItem(selItem.family,selItem.id,{[k]:["x","y","w","h"].includes(k)?Number(v):v});};
+  const commitProp=()=>pushHist(stands,access,services);
+  const fam=selItem?FAMILIES[selItem.family]:null;
+  const toolCls=t=>{if(tool!==t)return"tool-btn";if(t==="draw-access")return"tool-btn access-active";if(t==="draw-service")return"tool-btn service-active";return"tool-btn active";};
+  const allItems=[...stands,...access,...services];
+  return(<div className="editor-layout" onMouseMove={onMM} onMouseUp={onMU} onMouseLeave={onMU}>
+    {/* Left list */}
+    <div className="editor-list">
+      <div className="editor-list-header">
+        <div className="editor-list-title">Éléments</div>
+        <div className="editor-add-btns">
+          <button className="editor-add-btn stand" onClick={()=>setTool("draw-stand")} title="Dessiner stand">■</button>
+          <button className="editor-add-btn access" onClick={()=>setTool("draw-access")} title="Dessiner circulation">◆</button>
+          <button className="editor-add-btn service" onClick={()=>setTool("draw-service")} title="Dessiner service">●</button>
+          <button className="editor-add-btn" style={{color:"#5a4a3a",borderColor:"#5a4a3a40"}} onClick={createHall} title="Créer un hall">▭</button>
+        </div>
+      </div>
+      <div className="editor-list-body">
+        <div className="editor-list-section" style={{color:"#5a4a3a"}}>Halls ({halls.length})</div>
+        {halls.map(h=>(
+          <div key={h.id} className={`editor-item-row ${selHallKey===h.id?"selected":""}`}
+            onClick={()=>{setSelHallKey(h.id);setSelKey(null);setTool("select");}}
+            onContextMenu={e=>{e.preventDefault();e.stopPropagation();setSelHallKey(h.id);setSelKey(null);}}>
+            <div className="editor-item-dot" style={{background:h.border,borderRadius:3,border:`2px solid ${h.border}`}}/>
+            <div className="editor-item-info">
+              <div className="editor-item-name">{h.name}</div>
+              <div className="editor-item-sub">{stands.filter(s=>s.hall===h.id).length} stands · {h.x},{h.y}</div>
+            </div>
+          </div>
+        ))}
+        <div className="editor-list-section">Stands ({stands.length})</div>
+        {stands.map(s=><div key={s.id} className={`editor-item-row ${selKey===`stand-${s.id}`?"selected":""}`} onClick={()=>{setSelKey(`stand-${s.id}`);setTool("select");}} onContextMenu={e=>onItemCtx("stand",s.id,e)}>
+          <div className="editor-item-dot" style={{background:s.color,borderRadius:2}}/>
+          <div className="editor-item-info"><div className="editor-item-name">{s.logo} {s.name}</div><div className="editor-item-sub">{s.number} · Hall {s.hall}</div></div>
+        </div>)}
+        <div className="editor-list-section" style={{color:"var(--col-access)"}}>Circulations ({access.length})</div>
+        {access.map(a=><div key={a.id} className={`editor-item-row ${selKey===`access-${a.id}`?"selected":""}`} onClick={()=>{setSelKey(`access-${a.id}`);setTool("select");}} onContextMenu={e=>onItemCtx("access",a.id,e)}>
+          <div className="editor-item-dot" style={{background:a.color,transform:"rotate(45deg)",borderRadius:1}}/>
+          <div className="editor-item-info"><div className="editor-item-name">{a.icon} {a.name}</div><div className="editor-item-sub">{a.subtype}</div></div>
+        </div>)}
+        <div className="editor-list-section" style={{color:"var(--col-service)"}}>Services ({services.length})</div>
+        {services.map(s=><div key={s.id} className={`editor-item-row ${selKey===`service-${s.id}`?"selected":""}`} onClick={()=>{setSelKey(`service-${s.id}`);setTool("select");}} onContextMenu={e=>onItemCtx("service",s.id,e)}>
+          <div className="editor-item-dot" style={{background:s.color,borderRadius:"50%"}}/>
+          <div className="editor-item-info"><div className="editor-item-name">{s.icon} {s.name}</div><div className="editor-item-sub">{s.subtype}</div></div>
+        </div>)}
+      </div>
+    </div>
+    {/* Canvas */}
+    <div className="editor-canvas-col">
+      <div className="editor-toolbar">
+        <button className={toolCls("select")} onClick={()=>setTool("select")}><Icon name="move" size={13}/> Sélection</button>
+        <div className="editor-toolbar-sep"/>
+        <button className={toolCls("draw-stand")} onClick={()=>setTool("draw-stand")} style={{borderColor:"#7a203550"}}>■ Stand</button>
+        <button className={toolCls("draw-access")} onClick={()=>setTool("draw-access")} style={{borderColor:"#1a6fa850"}}>◆ Circulation</button>
+        <button className={toolCls("draw-service")} onClick={()=>setTool("draw-service")} style={{borderColor:"#2d7a4f50"}}>● Service</button>
+        <div className="editor-toolbar-sep"/>
+        <button className="tool-btn" onClick={undo} disabled={histIdx===0}><Icon name="undo" size={13}/> Annuler</button>
+        <button className="tool-btn" onClick={redo} disabled={histIdx>=hist.length-1}><Icon name="redo" size={13}/> Rétablir</button>
+        <div className="editor-toolbar-sep"/>
+        <button className="tool-btn" onClick={()=>setZoom(z=>clampZ(z*1.25))}><Icon name="zoomin" size={13}/></button>
+        <button className="tool-btn" onClick={()=>setZoom(z=>clampZ(z*.8))}><Icon name="zoomout" size={13}/></button>
+        <button className="tool-btn" onClick={()=>{setZoom(1);setOffset({x:20,y:20});}}>⊙</button>
+        <div className="editor-toolbar-sep"/>
+        <label className="snap-toggle"><input type="checkbox" checked={showGrid} onChange={e=>setShowGrid(e.target.checked)}/> Grille</label>
+        <label className="snap-toggle"><input type="checkbox" checked={snapOn} onChange={e=>setSnapOn(e.target.checked)}/> Snap</label>
+        <select className="prop-input" style={{width:56,padding:"3px 6px",fontSize:11}} value={gridSize} onChange={e=>setGridSize(+e.target.value)}>
+          {[5,10,20,40].map(g=><option key={g} value={g}>{g}px</option>)}
+        </select>
+        <div className="editor-toolbar-sep"/>
+        <button className="tool-btn active" onClick={()=>showToast("Plan sauvegardé ✓")}><Icon name="save" size={13}/> Sauvegarder</button>
+      </div>
+      <div className="editor-canvas-wrap" ref={canvasRef} style={{cursor:tool==="select"?"grab":"crosshair"}} onMouseDown={onCanvasMD} onContextMenu={e=>e.preventDefault()}>
+        <svg width="100%" height="100%" style={{display:"block"}}>
+          <g transform={`translate(${offset.x},${offset.y}) scale(${zoom})`}>
+            <rect width={CANVAS_W} height={CANVAS_H} fill="#ece8e2" rx="4"/>
+            {showGrid&&<g opacity=".38">
+              {Array.from({length:Math.ceil(CANVAS_W/gridSize)+1},(_,i)=><line key={"v"+i} x1={i*gridSize} y1={0} x2={i*gridSize} y2={CANVAS_H} stroke="#c0b8b0" strokeWidth=".5"/>)}
+              {Array.from({length:Math.ceil(CANVAS_H/gridSize)+1},(_,i)=><line key={"h"+i} x1={0} y1={i*gridSize} x2={CANVAS_W} y2={i*gridSize} stroke="#c0b8b0" strokeWidth=".5"/>)}
+            </g>}
+            <rect width={CANVAS_W} height={CANVAS_H} fill="none" stroke="#cec5bb" strokeWidth="1" rx="4"/>
+            {halls.map(h=>{const isSH=selHallKey===h.id;const cx=h.x+h.w/2,cy=h.y+h.h/2;return(<g key={h.id}
+              style={{cursor:tool==="select"?"move":"default"}}
+              onMouseDown={e=>{if(tool==="select"){e.stopPropagation();onHallMD(h.id,e);}}}
+              onDoubleClick={e=>{e.stopPropagation();setEditHallModal(h);}}
+              onContextMenu={e=>{e.preventDefault();e.stopPropagation();setSelHallKey(h.id);setSelKey(null);}}>
+              <rect x={h.x} y={h.y} width={h.w} height={h.h} fill={h.color} stroke={isSH?"#5a4a3a":h.border} strokeWidth={isSH?2.5:1.5} rx="8" strokeDasharray={isSH?"none":"6,3"}/>
+              {isSH&&<rect x={h.x-3} y={h.y-3} width={h.w+6} height={h.h+6} rx="11" fill="none" stroke="#5a4a3a" strokeWidth="1" strokeDasharray="5,3" opacity=".5"/>}
+              <text x={h.x+12} y={h.y+20} fill={h.border} fontSize="13" fontWeight="700" fontFamily="Cormorant Garamond">{h.name}</text>
+              <text x={h.x+h.w-10} y={h.y+20} fill={h.border} fontSize="9" textAnchor="end" fontFamily="DM Sans" opacity=".7">{stands.filter(s=>s.hall===h.id).length} st.</text>
+              {isSH&&[{hx:h.x,hy:h.y,c:"nw"},{hx:cx,hy:h.y,c:"n"},{hx:h.x+h.w,hy:h.y,c:"ne"},{hx:h.x+h.w,hy:cy,c:"e"},{hx:h.x+h.w,hy:h.y+h.h,c:"se"},{hx:cx,hy:h.y+h.h,c:"s"},{hx:h.x,hy:h.y+h.h,c:"sw"},{hx:h.x,hy:cy,c:"w"}].map(({hx:hpx,hy:hpy,c})=>(
+                <rect key={c} x={hpx-5} y={hpy-5} width="10" height="10" rx="2" fill="#fff" stroke="#5a4a3a" strokeWidth="1.5"
+                  style={{cursor:`${c}-resize`}} onMouseDown={e=>{e.stopPropagation();onHallResizeStart(h.id,c,e);}}/>
+              ))}
+            </g>);})}
+            <rect x={CANVAS_W/2-55} y={CANVAS_H-46} width="110" height="28" rx="5" fill="#7a203520" stroke="#7a203550"/>
+            <text x={CANVAS_W/2} y={CANVAS_H-26} fill="#7a2035" fontSize="11" textAnchor="middle" fontFamily="DM Sans" fontWeight="500">ENTRÉE</text>
+            <polygon points={`${CANVAS_W/2-10},${CANVAS_H-47} ${CANVAS_W/2+10},${CANVAS_H-47} ${CANVAS_W/2},${CANVAS_H-57}`} fill="#7a203580"/>
+            {allItems.map(item=><ItemShape key={`${item.family}-${item.id}`} item={item} selected={selKey===`${item.family}-${item.id}`} readOnly={false}
+              onMD={e=>onItemMD(item.family,item.id,e)}
+              onDbl={()=>setEditModal({fam:item.family,item})}
+              onCtx={e=>onItemCtx(item.family,item.id,e)}
+              onResizeStart={(handle,e)=>onResizeStart(item.family,item.id,handle,e)}/>)}
+            {drawing&&(()=>{const x=Math.min(drawing.sx,drawing.ex),y=Math.min(drawing.sy,drawing.ey),w=Math.abs(drawing.ex-drawing.sx),h=Math.abs(drawing.ey-drawing.sy);const dc=tool==="draw-access"?"#1a6fa8":tool==="draw-service"?"#2d7a4f":"#7a2035";return<rect x={x} y={y} width={w} height={h} fill={hx(dc,.08)} stroke={dc} strokeWidth="1.5" strokeDasharray="6,3" rx="4"/>;})()}
+          </g>
+        </svg>
+      </div>
+      <div className="editor-statusbar">
+        <span>{status}</span><span>Zoom {Math.round(zoom*100)}%</span>
+        <span>S:{stands.length} C:{access.length} Sv:{services.length}</span>
+        {selItem{selItem&&<span style={{color:fam?.color,fontWeight:500}}>{selItem.icon||selItem.logo} {selItem.name}</span>}{selItem&&<span style={{color:fam?.color,fontWeight:500}}>{selItem.icon||selItem.logo} {selItem.name}</span>}<span style={{color:fam?.color,fontWeight:500}}>{selItem.icon||selItem.logo} {selItem.name}</span>}
+        {!selItem{selItem&&<span style={{color:fam?.color,fontWeight:500}}>{selItem.icon||selItem.logo} {selItem.name}</span>}{selItem&&<span style={{color:fam?.color,fontWeight:500}}>{selItem.icon||selItem.logo} {selItem.name}</span>}selHall{selItem&&<span style={{color:fam?.color,fontWeight:500}}>{selItem.icon||selItem.logo} {selItem.name}</span>}{selItem&&<span style={{color:fam?.color,fontWeight:500}}>{selItem.icon||selItem.logo} {selItem.name}</span>}<span style={{color:"#5a4a3a",fontWeight:500}}>🏛 {selHall.name} — {stands.filter(s=>s.hall===selHall.id).length} stands</span>}
+        <span style={{marginLeft:"auto",color:"var(--text3)"}}>Double-clic : éditer · Clic droit : options</span>
+      </div>
+    </div>
+    {/* Props */}
+    <div className="editor-props">
+      <div className="editor-props-header">
+        <div className="editor-props-title">Propriétés</div>
+        {selItem&&fam&&<span className="editor-props-family" style={{background:hx(fam.color,.12),color:fam.color}}>{fam.label}</span>}
+      </div>
+      <div className="editor-props-body">
+        {!selItem?(<div className="no-selection"><div className="no-selection-icon">↖</div><div className="no-selection-text">Sélectionnez un élément.<br/><br/>■ <b>Stand</b> — rectangle<br/>◆ <b>Circulation</b> — losange<br/>● <b>Service</b> — cercle<br/><br/>Dessinez en choisissant un outil et en glissant sur le canvas.</div></div>
+        ):(<>
+          <div className="prop-section">
+            <div className="prop-section-title">Identité</div>
+            <div className="prop-row"><span className="prop-label">Nom</span><input className="prop-input" value={selItem.name} onChange={e=>updProp("name",e.target.value)} onBlur={commitProp}/></div>
+            {selItem.family==="stand"&&<>
+              <div className="prop-row"><span className="prop-label">Numéro</span><input className="prop-input" value={selItem.number||""} onChange={e=>updProp("number",e.target.value)} onBlur={commitProp}/></div>
+              <div className="prop-row"><span className="prop-label">Hall</span><select className="prop-input" value={selItem.hall||"A"} onChange={e=>{updProp("hall",e.target.value);commitProp();}}>
+                {halls.map(h=><option key={h.id} value={h.id}>{h.name}</option>)}
+              </select></div>
+            </>}
+            {(selItem.family==="access"||selItem.family==="service")&&<>
+              <div className="prop-row"><span className="prop-label">Type</span><select className="prop-input" value={selItem.subtype||""} onChange={e=>{updProp("subtype",e.target.value);commitProp();}}>
+                {(selItem.family==="access"?ACCESS_TYPES:SERVICE_TYPES).map(t=><option key={t}>{t}</option>)}
+              </select></div>
+              <div className="prop-row"><span className="prop-label">Note</span><input className="prop-input" value={selItem.note||""} onChange={e=>updProp("note",e.target.value)} onBlur={commitProp}/></div>
+            </>}
+            <div style={{marginTop:8}}>
+              <button className="btn-primary" style={{width:"100%",justifyContent:"center",fontSize:12,background:fam?.color||"var(--accent)"}} onClick={()=>setEditModal({fam:selItem.family,item:selItem})}><Icon name="edit" size={13}/> Éditer les infos complètes</button>
+            </div>
+          </div>
+          <div className="prop-section">
+            <div className="prop-section-title">Position & Taille</div>
+            <div className="prop-row-2">{[["x","X"],["y","Y"]].map(([k,l])=><div key={k} className="prop-field"><label>{l} (px)</label><input type="number" value={selItem[k]} onChange={e=>updProp(k,e.target.value)} onBlur={commitProp}/></div>)}</div>
+            <div className="prop-row-2">{[["w","Larg."],["h","Haut."]].map(([k,l])=><div key={k} className="prop-field"><label>{l} (px)</label><input type="number" value={selItem[k]} onChange={e=>updProp(k,e.target.value)} onBlur={commitProp}/></div>)}</div>
+          </div>
+          <div className="prop-section">
+            <div className="prop-section-title">Alignement</div>
+            <div className="align-btns">
+              {[["left","◀ G"],["cx","↔ H"],["right","D ▶"],["top","▲ H"],["cy","↕ V"],["bottom","B ▼"]].map(([m,l])=><button key={m} className="align-btn" onClick={()=>align(m)}>{l}</button>)}
+            </div>
+          </div>
+          <div className="prop-section">
+            <div className="prop-section-title">Icône</div>
+            <div className="icon-picker">
+              {(selItem.family==="access"?ACCESS_ICONS:selItem.family==="service"?SERVICE_ICONS:STAND_EMOJIS).map(e=>(
+                <button key={e} className={`icon-btn ${(selItem.logo||selItem.icon)===e?"sel":""}`}
+                  onClick={()=>{updProp(selItem.family==="stand"?"logo":"icon",e);commitProp();}}>{e}</button>
+              ))}
+            </div>
+            {selItem.family==="stand"&&<div style={{marginTop:10}}>
+              <div style={{fontSize:10,color:"var(--text3)",marginBottom:6,textTransform:"uppercase",letterSpacing:"1px"}}>Couleur</div>
+              <div className="color-options">{STAND_COLORS.map(c=><div key={c} className={`color-swatch ${selItem.color===c?"selected":""}`} style={{background:c,width:22,height:22}} onClick={()=>{updProp("color",c);commitProp();}}/>)}</div>
+            </div>}
+          </div>
+          <div className="prop-section">
+            <div className="prop-section-title">Actions</div>
+            <div style={{display:"flex",flexDirection:"column",gap:6}}>
+              <button className="btn-secondary" style={{justifyContent:"center",fontSize:12}} onClick={()=>dupItem(selItem.family,selItem.id)}><Icon name="duplicate" size={13}/> Dupliquer</button>
+              <button className="btn-danger" style={{justifyContent:"center"}} onClick={()=>delItem(selItem.family,selItem.id)}><Icon name="trash" size={13}/> Supprimer</button>
+            </div>
+          </div>
+        </>)}
+        <div className="prop-section">
+          <div className="prop-section-title" style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+            <span>Halls</span>
+            <button className="align-btn" onClick={createHall} style={{fontSize:12,padding:"2px 8px"}}>+ Nouveau</button>
+          </div>
+          {selHall?(
+            <>
+              <div className="prop-row"><span className="prop-label">Nom</span><input className="prop-input" value={selHall.name} onChange={e=>updHall(selHall.id,{name:e.target.value})}/></div>
+              <div className="prop-row-2">
+                <div className="prop-field"><label>X (px)</label><input type="number" value={selHall.x} onChange={e=>updHall(selHall.id,{x:+e.target.value})}/></div>
+                <div className="prop-field"><label>Y (px)</label><input type="number" value={selHall.y} onChange={e=>updHall(selHall.id,{y:+e.target.value})}/></div>
+              </div>
+              <div className="prop-row-2">
+                <div className="prop-field"><label>Larg.</label><input type="number" value={selHall.w} onChange={e=>updHall(selHall.id,{w:+e.target.value})}/></div>
+                <div className="prop-field"><label>Haut.</label><input type="number" value={selHall.h} onChange={e=>updHall(selHall.id,{h:+e.target.value})}/></div>
+              </div>
+              <div style={{marginBottom:8}}>
+                <div style={{fontSize:10,color:"var(--text3)",marginBottom:6,textTransform:"uppercase",letterSpacing:"1px"}}>Couleur</div>
+                <div className="color-options">{HALL_COLORS.map(c=><div key={c} className={`color-swatch ${selHall.border===c?"selected":""}`} style={{background:c,width:22,height:22}} onClick={()=>updHallColor(selHall.id,c)}/>)}</div>
+              </div>
+              <div style={{display:"flex",gap:6,marginTop:6}}>
+                <button className="btn-secondary" style={{flex:1,justifyContent:"center",fontSize:11}} onClick={()=>setEditHallModal(selHall)}><Icon name="edit" size={12}/> Renommer</button>
+                <button className="btn-danger" style={{flex:1,justifyContent:"center"}} onClick={()=>deleteHall(selHall.id)}><Icon name="trash" size={12}/> Suppr.</button>
+              </div>
+            </>
+          ):(
+            <div className="halls-list">{halls.map(h=>(
+              <div key={h.id} className="hall-row" onClick={()=>{setSelHallKey(h.id);setSelKey(null);}}>
+                <div className="hall-color" style={{background:h.border}}/>
+                <div className="hall-name">{h.name}</div>
+                <div className="hall-count">{stands.filter(s=>s.hall===h.id).length} st.</div>
+              </div>
+            ))}</div>
+          )}
+        </div>
+      </div>
+    </div>
+    {ctxMenu&&(<div className="ctx-menu" style={{left:ctxMenu.x,top:ctxMenu.y}} onMouseLeave={()=>setCtxMenu(null)}>
+      <div className="ctx-item" onClick={()=>{const it=all().find(i=>i.family===ctxMenu.fam&&i.id===ctxMenu.id);if(it)setEditModal({fam:ctxMenu.fam,item:it});setCtxMenu(null);}}><Icon name="edit" size={14}/> Éditer</div>
+      <div className="ctx-item" onClick={()=>{dupItem(ctxMenu.fam,ctxMenu.id);setCtxMenu(null);}}><Icon name="duplicate" size={14}/> Dupliquer</div>
+      <div className="ctx-sep"/>
+      {[["left","◀ Gauche"],["cx","↔ Centrer H"],["top","▲ Haut"],["cy","↕ Centrer V"]].map(([m,l])=><div key={m} className="ctx-item" onClick={()=>{align(m);setCtxMenu(null);}}>{l}</div>)}
+      <div className="ctx-sep"/>
+      <div className="ctx-item danger" onClick={()=>{delItem(ctxMenu.fam,ctxMenu.id);setCtxMenu(null);}}><Icon name="trash" size={14}/> Supprimer</div>
+    </div>)}
+    {editModal&&editModal.fam==="stand"&&<StandModal stand={editModal.item} onSave={data=>{const ns=stands.map(s=>s.id===data.id?{...s,...data}:s);setStands(ns);pushHist(ns,access,services);showToast("Mis à jour ✓");setEditModal(null);}} onClose={()=>setEditModal(null)}/>}
+    {editModal&&(editModal.fam==="access"||editModal.fam==="service")&&<POIModal fam={editModal.fam} item={editModal.item} onSave={data=>{if(data.family==="access"){const na=access.map(a=>a.id===data.id?{...a,...data}:a);setAccess(na);pushHist(stands,na,services);}else{const nv=services.map(s=>s.id===data.id?{...s,...data}:s);setServices(nv);pushHist(stands,access,nv);}showToast("Mis à jour ✓");setEditModal(null);}} onClose={()=>setEditModal(null)}/>}
+    {editHallModal&&<HallModal hall={editHallModal} onSave={data=>{setHalls(p=>p.map(h=>h.id===data.id?{...h,...data}:h));showToast("Hall mis à jour ✓");setEditHallModal(null);}} onClose={()=>setEditHallModal(null)}/>}
+    {confirm&&<ConfirmModal msg={confirm.msg} onConfirm={confirm.onConfirm} onClose={()=>setConfirm(null)}/>}
+  </div>);}
+
+function HallModal({hall,onSave,onClose}){
+  const [f,setF]=useState({name:hall.name||"",border:hall.border||HALL_COLORS[0]});
+  const s=(k,v)=>setF(p=>({...p,[k]:v}));
+  return(<div className="modal-overlay"><div className="modal" style={{maxWidth:420}}>
+    <div className="modal-header"><div className="modal-title" style={{color:"#5a4a3a"}}>Modifier le hall</div><button className="btn-icon" onClick={onClose}><Icon name="close" size={15}/></button></div>
+    <div className="modal-body"><div className="form-grid">
+      <div className="form-group full"><label className="form-label">Nom du hall *</label><input className="form-input" value={f.name} onChange={e=>s("name",e.target.value)}/></div>
+      <div className="form-group full"><label className="form-label">Couleur</label>
+        <div className="color-options">{HALL_COLORS.map(c=><div key={c} className={`color-swatch ${f.border===c?"selected":""}`} style={{background:c}} onClick={()=>s("border",c)}/>)}</div>
+      </div>
+    </div></div>
+    <div className="modal-footer"><button className="btn-secondary" onClick={onClose}>Annuler</button>
+      <button className="btn-primary" style={{background:"#5a4a3a"}} onClick={()=>{if(f.name)onSave({...hall,name:f.name,border:f.border,color:hx(f.border,.12)});}}>Enregistrer</button>
+    </div>
+  </div></div>);}
+
+function StandModal({stand,onSave,onClose}){
+  const isNew=!stand.id;
+  const [f,setF]=useState({name:stand.name||"",number:stand.number||"",hall:stand.hall||"A",sector:stand.sector||SECTORS[0],description:stand.description||"",contact:stand.contact||"",website:stand.website||"",logo:stand.logo||"🏢",color:stand.color||STAND_COLORS[0]});
+  const s=(k,v)=>setF(p=>({...p,[k]:v}));
+  return(<div className="modal-overlay"><div className="modal">
+    <div className="modal-header"><div className="modal-title">{isNew?"Nouveau stand":`Modifier — ${stand.name}`}</div><button className="btn-icon" onClick={onClose}><Icon name="close" size={15}/></button></div>
+    <div className="modal-body"><div className="form-grid">
+      <div className="form-group full"><label className="form-label">Nom *</label><input className="form-input" value={f.name} onChange={e=>s("name",e.target.value)}/></div>
+      <div className="form-group"><label className="form-label">N° stand</label><input className="form-input" value={f.number} onChange={e=>s("number",e.target.value)} placeholder="A01"/></div>
+      <div className="form-group"><label className="form-label">Hall</label><select className="form-select" value={f.hall} onChange={e=>s("hall",e.target.value)}>{["A","B","C","D"].map(h=><option key={h}>{h}</option>)}</select></div>
+      <div className="form-group full"><label className="form-label">Secteur</label><select className="form-select" value={f.sector} onChange={e=>s("sector",e.target.value)}>{SECTORS.map(x=><option key={x}>{x}</option>)}</select></div>
+      <div className="form-group full"><label className="form-label">Description</label><textarea className="form-textarea" value={f.description} onChange={e=>s("description",e.target.value)}/></div>
+      <div className="form-group"><label className="form-label">Email</label><input className="form-input" value={f.contact} onChange={e=>s("contact",e.target.value)}/></div>
+      <div className="form-group"><label className="form-label">Site web</label><input className="form-input" value={f.website} onChange={e=>s("website",e.target.value)}/></div>
+      <div className="form-group full"><label className="form-label">Icône</label><div className="icon-picker">{STAND_EMOJIS.map(e=><button key={e} className={`icon-btn ${f.logo===e?"sel":""}`} onClick={()=>s("logo",e)}>{e}</button>)}</div></div>
+      <div className="form-group full"><label className="form-label">Couleur</label><div className="color-options">{STAND_COLORS.map(c=><div key={c} className={`color-swatch ${f.color===c?"selected":""}`} style={{background:c}} onClick={()=>s("color",c)}/>)}</div></div>
+    </div></div>
+    <div className="modal-footer"><button className="btn-secondary" onClick={onClose}>Annuler</button><button className="btn-primary" onClick={()=>{if(f.name)onSave({...stand,...f});}}>{isNew?"Créer":"Enregistrer"}</button></div>
+  </div></div>);}
+
+function POIModal({fam,item,onSave,onClose}){
+  const isNew=!item.id;const isA=fam==="access";
+  const icons=isA?ACCESS_ICONS:SERVICE_ICONS;const types=isA?ACCESS_TYPES:SERVICE_TYPES;
+  const fc=isA?"var(--col-access)":"var(--col-service)";
+  const [f,setF]=useState({name:item.name||"",subtype:item.subtype||types[0],icon:item.icon||icons[0],note:item.note||""});
+  const s=(k,v)=>setF(p=>({...p,[k]:v}));
+  return(<div className="modal-overlay"><div className="modal" style={{maxWidth:480}}>
+    <div className="modal-header"><div className="modal-title" style={{color:fc}}>{isNew?(isA?"Nouvelle circulation":"Nouveau service"):`Modifier — ${item.name}`}</div><button className="btn-icon" onClick={onClose}><Icon name="close" size={15}/></button></div>
+    <div className="modal-body"><div className="form-grid">
+      <div className="form-group full"><label className="form-label">Nom *</label><input className="form-input" value={f.name} onChange={e=>s("name",e.target.value)}/></div>
+      <div className="form-group full"><label className="form-label">Type</label><select className="form-select" value={f.subtype} onChange={e=>s("subtype",e.target.value)}>{types.map(t=><option key={t}>{t}</option>)}</select></div>
+      <div className="form-group full"><label className="form-label">Note / Information</label><input className="form-input" value={f.note} onChange={e=>s("note",e.target.value)} placeholder="Horaires, accès, remarque…"/></div>
+      <div className="form-group full"><label className="form-label">Icône</label><div className="icon-picker">{icons.map(e=><button key={e} className={`icon-btn ${f.icon===e?"sel":""}`} onClick={()=>s("icon",e)}>{e}</button>)}</div></div>
+    </div></div>
+    <div className="modal-footer"><button className="btn-secondary" onClick={onClose}>Annuler</button><button className="btn-primary" style={{background:isA?"var(--col-access)":"var(--col-service)"}} onClick={()=>{if(f.name)onSave({...item,...f,family:fam});}}>{isNew?"Créer":"Enregistrer"}</button></div>
+  </div></div>);}
+
+function EventModal({sid,ev,onSave,onClose}){
+  const isNew=!ev.id;
+  const [f,setF]=useState({title:ev.title||"",type:ev.type||"news",date:ev.date||new Date().toISOString().slice(0,10),desc:ev.desc||""});
+  const s=(k,v)=>setF(p=>({...p,[k]:v}));
+  return(<div className="modal-overlay"><div className="modal" style={{maxWidth:460}}>
+    <div className="modal-header"><div className="modal-title">{isNew?"Nouvel événement":"Modifier"}</div><button className="btn-icon" onClick={onClose}><Icon name="close" size={15}/></button></div>
+    <div className="modal-body"><div className="form-grid">
+      <div className="form-group full"><label className="form-label">Titre *</label><input className="form-input" value={f.title} onChange={e=>s("title",e.target.value)}/></div>
+      <div className="form-group"><label className="form-label">Type</label><select className="form-select" value={f.type} onChange={e=>s("type",e.target.value)}>{EVENT_TYPES.map(t=><option key={t} value={t}>{EVENT_LABELS[t]}</option>)}</select></div>
+      <div className="form-group"><label className="form-label">Date</label><input className="form-input" type="date" value={f.date} onChange={e=>s("date",e.target.value)}/></div>
+      <div className="form-group full"><label className="form-label">Description</label><textarea className="form-textarea" value={f.desc} onChange={e=>s("desc",e.target.value)}/></div>
+    </div></div>
+    <div className="modal-footer"><button className="btn-secondary" onClick={onClose}>Annuler</button><button className="btn-primary" onClick={()=>{if(f.title)onSave(sid,{...ev,...f});}}>{isNew?"Créer":"Enregistrer"}</button></div>
+  </div></div>);}
+
+function ConfirmModal({msg,onConfirm,onClose}){return(<div className="modal-overlay"><div className="modal" style={{maxWidth:380}}>
+  <div className="modal-header"><div className="modal-title">Confirmation</div><button className="btn-icon" onClick={onClose}><Icon name="close" size={15}/></button></div>
+  <div className="modal-body"><div style={{color:"var(--text2)",fontSize:14,lineHeight:1.6,marginBottom:6}}>{msg}</div><div style={{fontSize:12,color:"var(--text3)"}}>Cette action est irréversible.</div></div>
+  <div className="modal-footer"><button className="btn-secondary" onClick={onClose}>Annuler</button><button className="btn-danger" style={{padding:"9px 18px"}} onClick={onConfirm}><Icon name="trash" size={14}/> Supprimer</button></div>
+</div></div>);}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>

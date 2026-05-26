@@ -1045,10 +1045,11 @@ function PlanEditor({stands,setStands,access,setAccess,services,setServices,hall
         </svg>
       </div>
       <div className="editor-statusbar">
-        <span>{status}</span><span>Zoom {Math.round(zoom*100)}%</span>
+        <span>{status}</span>
+        <span>Zoom {Math.round(zoom*100)}%</span>
         <span>S:{stands.length} C:{access.length} Sv:{services.length}</span>
-        {selItem{selItem&&<span style={{color:fam?.color,fontWeight:500}}>{selItem.icon||selItem.logo} {selItem.name}</span>}{selItem&&<span style={{color:fam?.color,fontWeight:500}}>{selItem.icon||selItem.logo} {selItem.name}</span>}<span style={{color:fam?.color,fontWeight:500}}>{selItem.icon||selItem.logo} {selItem.name}</span>}
-        {!selItem{selItem&&<span style={{color:fam?.color,fontWeight:500}}>{selItem.icon||selItem.logo} {selItem.name}</span>}{selItem&&<span style={{color:fam?.color,fontWeight:500}}>{selItem.icon||selItem.logo} {selItem.name}</span>}selHall{selItem&&<span style={{color:fam?.color,fontWeight:500}}>{selItem.icon||selItem.logo} {selItem.name}</span>}{selItem&&<span style={{color:fam?.color,fontWeight:500}}>{selItem.icon||selItem.logo} {selItem.name}</span>}<span style={{color:"#5a4a3a",fontWeight:500}}>🏛 {selHall.name} — {stands.filter(s=>s.hall===selHall.id).length} stands</span>}
+        {selItem&&<span style={{color:fam?.color,fontWeight:500}}>{selItem.icon||selItem.logo} {selItem.name}</span>}
+        {!selItem&&selHall&&<span style={{color:"#5a4a3a",fontWeight:500}}>🏛 {selHall.name} — {stands.filter(s=>s.hall===selHall.id).length} stands</span>}
         <span style={{marginLeft:"auto",color:"var(--text3)"}}>Double-clic : éditer · Clic droit : options</span>
       </div>
     </div>
@@ -1237,7 +1238,7 @@ function ConfirmModal({msg,onConfirm,onClose}){return(<div className="modal-over
   <div className="modal-footer"><button className="btn-secondary" onClick={onClose}>Annuler</button><button className="btn-danger" style={{padding:"9px 18px"}} onClick={onConfirm}><Icon name="trash" size={14}/> Supprimer</button></div>
 </div></div>);}
 
-const root = ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
 </body>
 </html>
